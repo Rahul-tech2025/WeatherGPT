@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const weatherRoutes = require('./routes/weather.routes');
+
 const app = express();
 
 // Middlewares
@@ -21,6 +23,9 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Weather API Routes
+app.use('/api/weather', weatherRoutes);
 
 // Central 404 Route Handler
 app.use((req, res) => {
