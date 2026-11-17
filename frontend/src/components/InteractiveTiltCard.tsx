@@ -5,16 +5,16 @@ import React, { useRef, useState, useCallback, ReactNode } from 'react';
 interface InteractiveTiltCardProps {
   children: ReactNode;
   className?: string;
-  maxTilt?: number; // max tilt in degrees (default 7)
-  glareOpacity?: number; // max glare opacity (default 0.22)
+  maxTilt?: number; // max tilt in degrees (default 6)
+  glareOpacity?: number; // max glare opacity (default 0.38)
   scaleOnHover?: number; // slight scale on hover (default 1.01)
 }
 
 export default function InteractiveTiltCard({
   children,
   className = '',
-  maxTilt = 7,
-  glareOpacity = 0.22,
+  maxTilt = 6,
+  glareOpacity = 0.38,
   scaleOnHover = 1.01,
 }: InteractiveTiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -36,11 +36,11 @@ export default function InteractiveTiltCard({
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      // Calculate tilt angles
+      // Ultra-smooth physical tilt angles with subtle inertia
       const rotateX = ((y - centerY) / centerY) * -maxTilt;
       const rotateY = ((x - centerX) / centerX) * maxTilt;
 
-      // Glare position percentage
+      // Glare coordinates
       const glareX = (x / rect.width) * 100;
       const glareY = (y / rect.height) * 100;
 
@@ -75,19 +75,19 @@ export default function InteractiveTiltCard({
       style={{
         transform: transformStyle,
         transition: isHovered
-          ? 'transform 0.08s cubic-bezier(0.2, 0, 0, 1)'
-          : 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          ? 'transform 0.16s cubic-bezier(0.25, 1, 0.5, 1)'
+          : 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
         transformStyle: 'preserve-3d',
         willChange: 'transform',
       }}
       className={`relative overflow-hidden group ${className}`}
     >
-      {/* Specular Holographic Glare Layer */}
+      {/* High-Luminance Specular Starlight Glare Layer */}
       <div
         className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300 rounded-[inherit]"
         style={{
           opacity: glareStyle.opacity,
-          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.35) 0%, rgba(147, 197, 253, 0.15) 30%, transparent 65%)`,
+          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.28) 22%, rgba(255, 255, 255, 0.06) 45%, transparent 68%)`,
         }}
       />
       {children}

@@ -39,19 +39,24 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
   const range = globalMax - globalMin || 1;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.12} scaleOnHover={1.006}>
-      <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden">
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.38} scaleOnHover={1.006}>
+      <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden bg-[#080c14]/85 border border-white/[0.10]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
-            📅
+          <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-white text-sm">
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
           </div>
           <div>
             <h2 className="text-base font-bold text-white tracking-tight">7-Day Outlook</h2>
-            <p className="text-[11px] text-slate-400 font-medium">Weekly synoptic progression & min/max spread</p>
+            <p className="text-[11px] text-slate-400 font-medium">Weekly synoptic progression &amp; min/max spread</p>
           </div>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 bg-white/[0.06] px-2.5 py-1 rounded-full border border-white/10 font-mono">
           Normalized Spread
         </span>
       </div>

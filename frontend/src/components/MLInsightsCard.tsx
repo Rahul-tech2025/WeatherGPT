@@ -47,8 +47,8 @@ export default function MLInsightsCard({
   const rainPred = prediction?.rainfall_prediction;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.14} scaleOnHover={1.006}>
-      <div className="glass-card rounded-[2.5rem] p-7 md:p-9 relative overflow-hidden group">
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.40} scaleOnHover={1.006}>
+      <div className="glass-card rounded-[2.5rem] p-7 md:p-9 relative overflow-hidden group bg-[#080c14]/90 border border-white/[0.12]">
       {/* Decorative ambient atmospheric glow */}
       <div className="absolute -top-32 -right-32 w-80 h-80 bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none"></div>
@@ -91,8 +91,10 @@ export default function MLInsightsCard({
         <div className="bg-slate-950/50 border border-white/[0.08] hover:border-amber-400/40 rounded-3xl p-6 transition-all duration-300 shadow-inner group/card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-lg shadow-sm">
-                🌡️
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.06] border border-white/15 flex items-center justify-center text-white shadow-sm">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
+                </svg>
               </div>
               <div>
                 <div className="text-xs font-bold text-white">Model A: Temperature Regressor</div>
@@ -131,8 +133,13 @@ export default function MLInsightsCard({
         <div className="bg-slate-950/50 border border-white/[0.08] hover:border-cyan-400/40 rounded-3xl p-6 transition-all duration-300 shadow-inner group/card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-lg shadow-sm">
-                🌧️
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.06] border border-white/15 flex items-center justify-center text-white shadow-sm">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="16" y1="13" x2="16" y2="21" />
+                  <line x1="8" y1="13" x2="8" y2="21" />
+                  <line x1="12" y1="15" x2="12" y2="23" />
+                  <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
+                </svg>
               </div>
               <div>
                 <div className="text-xs font-bold text-white">Model B: Rainfall Classifier</div>

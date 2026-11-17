@@ -32,20 +32,23 @@ export const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourly, unit }) 
   if (!hourly || hourly.length === 0) return null;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.12} scaleOnHover={1.006}>
-      <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden">
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.38} scaleOnHover={1.006}>
+      <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden bg-[#080c14]/85 border border-white/[0.10]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-sm">
-            ⏱️
+          <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-white text-sm">
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
           </div>
           <div>
             <h2 className="text-base font-bold text-white tracking-tight">24-Hour Horizon</h2>
-            <p className="text-[11px] text-slate-400 font-medium">Hourly atmospheric trend & precipitation</p>
+            <p className="text-[11px] text-slate-400 font-medium">Hourly progression &amp; precipitation metrics</p>
           </div>
         </div>
-        <span className="text-[11px] font-semibold text-cyan-400/80 bg-cyan-950/40 px-2.5 py-1 rounded-full border border-cyan-800/30">
-          Scroll ➔
+        <span className="text-[10px] font-mono text-slate-300 bg-white/[0.06] px-2.5 py-1 rounded-full border border-white/10">
+          Scroll Horizontal
         </span>
       </div>
 

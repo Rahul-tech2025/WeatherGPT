@@ -41,27 +41,24 @@ export default function DynamicIslandCapsule({
         onClick={() => setIsExpanded(!isExpanded)}
         className={`relative cursor-pointer select-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isExpanded
-            ? 'w-[92vw] sm:w-[460px] p-5 rounded-[2.2rem] bg-slate-950/90 border border-cyan-500/40 shadow-2xl shadow-cyan-500/20 backdrop-blur-3xl'
-            : 'w-auto px-4 py-2 rounded-full bg-slate-950/80 hover:bg-slate-900/90 border border-white/15 hover:border-cyan-400/50 shadow-xl shadow-black/50 backdrop-blur-2xl'
+            ? 'w-[92vw] sm:w-[460px] p-5 rounded-[2.2rem] bg-[#070b12]/95 border border-white/20 shadow-2xl shadow-black/80 backdrop-blur-3xl'
+            : 'w-auto px-4 py-2 rounded-full bg-[#080c14]/90 hover:bg-[#0c121e] border border-white/15 hover:border-white/30 shadow-xl shadow-black/60 backdrop-blur-2xl'
         }`}
       >
-        {/* Glow ambient edge */}
-        <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-indigo-500/10 -z-10 pointer-events-none" />
-
         {/* COMPACT STATE */}
         {!isExpanded && (
           <div className="flex items-center space-x-3 text-xs">
             {/* Live Indicator Dot */}
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
             </span>
 
             {/* City & Temperature */}
             <div className="flex items-center space-x-1.5 font-bold text-white tracking-tight">
               <span>{city.name}</span>
-              <span className="text-cyan-400">•</span>
-              <span className="text-cyan-300 font-extrabold flex items-baseline">
+              <span className="text-slate-500">•</span>
+              <span className="text-white font-extrabold flex items-baseline">
                 <RollingNumberTicker value={temp} decimals={0} suffix={`°${unit}`} />
               </span>
             </div>
@@ -73,9 +70,12 @@ export default function DynamicIslandCapsule({
 
             {/* Audio pulse badge if playing */}
             {isPlayingAudio && (
-              <span className="flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-[10px] animate-pulse">
-                <span>🎙️</span>
-                <span>Playing</span>
+              <span className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white text-[10px] animate-pulse">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                </svg>
+                <span>Voice Active</span>
               </span>
             )}
 
@@ -100,12 +100,12 @@ export default function DynamicIslandCapsule({
             {/* Header: Location & Close Button */}
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
               <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                 <span className="text-sm font-extrabold text-white tracking-tight">
                   {city.name}, {city.country}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-400/20 font-mono font-bold">
-                  LIVE TELEMETRY
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.08] text-slate-300 border border-white/15 font-mono font-bold">
+                  TELEMETRY
                 </span>
               </div>
               <button
@@ -120,7 +120,7 @@ export default function DynamicIslandCapsule({
             <div className="grid grid-cols-3 gap-2.5 text-center">
               <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                 <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Temperature</div>
-                <div className="text-xl font-black text-cyan-300 mt-0.5">
+                <div className="text-xl font-black text-white mt-0.5">
                   <RollingNumberTicker value={temp} decimals={1} suffix={`°${unit}`} />
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5">{forecast.current.condition}</div>
@@ -128,15 +128,15 @@ export default function DynamicIslandCapsule({
 
               <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                 <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Humidity</div>
-                <div className="text-xl font-black text-blue-300 mt-0.5">
+                <div className="text-xl font-black text-slate-200 mt-0.5">
                   <RollingNumberTicker value={forecast.current.humidity} decimals={0} suffix="%" />
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">Wind: {forecast.current.windSpeed} km/h</div>
+                <div className="text-[10px] text-slate-400 mt-0.5 font-mono">{forecast.current.windSpeed} km/h</div>
               </div>
 
               <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                 <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">ML Rain Prob</div>
-                <div className="text-xl font-black text-emerald-300 mt-0.5">
+                <div className="text-xl font-black text-white mt-0.5">
                   {mlPrediction?.rainfall_prediction ? (
                     <RollingNumberTicker
                       value={mlPrediction.rainfall_prediction.rain_probability_pct}
@@ -147,7 +147,7 @@ export default function DynamicIslandCapsule({
                     '12%'
                   )}
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">Next-Day Scikit</div>
+                <div className="text-[10px] text-slate-400 mt-0.5">Scikit Inference</div>
               </div>
             </div>
 
@@ -158,9 +158,13 @@ export default function DynamicIslandCapsule({
                   onClick={() => {
                     onPlayAudioBriefing();
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-purple-500/20 transition-all hover:scale-[1.02]"
+                  className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-200 text-black font-extrabold text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all hover:scale-[1.02]"
                 >
-                  <span>{isPlayingAudio ? '⏹️ Stop' : '🎙️ Jarvis Voice'}</span>
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  </svg>
+                  <span>{isPlayingAudio ? 'Stop Audio' : 'Voice Briefing'}</span>
                 </button>
               )}
 
@@ -169,9 +173,12 @@ export default function DynamicIslandCapsule({
                   onNavigateTab('chat');
                   setIsExpanded(false);
                 }}
-                className="flex-1 py-2 px-3 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-blue-200 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
+                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
               >
-                <span>💬 Ask AI</span>
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Ask AI</span>
               </button>
 
               <button
@@ -179,31 +186,36 @@ export default function DynamicIslandCapsule({
                   onNavigateTab('map');
                   setIsExpanded(false);
                 }}
-                className="flex-1 py-2 px-3 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-400/30 text-cyan-200 font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
+                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
               >
-                <span>🛰️ Radar</span>
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                  <path d="M2 12h20" />
+                </svg>
+                <span>Radar</span>
               </button>
             </div>
 
             {/* Theme Aesthetic Selector */}
             <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-400">
-              <span className="font-semibold text-[11px]">Aesthetic Theme:</span>
-              <div className="flex items-center space-x-1.5 bg-black/40 p-1 rounded-xl border border-white/10">
+              <span className="font-semibold text-[11px]">Space Theme:</span>
+              <div className="flex items-center space-x-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
                 <button
                   onClick={() => onThemeChange('obsidian')}
                   className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
                     currentTheme === 'obsidian'
-                      ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                      ? 'bg-white text-black shadow-sm font-extrabold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  Obsidian
+                  Deep Space
                 </button>
                 <button
                   onClick={() => onThemeChange('titanium')}
                   className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
                     currentTheme === 'titanium'
-                      ? 'bg-slate-200 text-slate-900 shadow-sm'
+                      ? 'bg-white text-black shadow-sm font-extrabold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -213,11 +225,11 @@ export default function DynamicIslandCapsule({
                   onClick={() => onThemeChange('cyberpunk')}
                   className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
                     currentTheme === 'cyberpunk'
-                      ? 'bg-fuchsia-500 text-white shadow-sm'
+                      ? 'bg-white text-black shadow-sm font-extrabold'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  Cyberpunk
+                  Neon Space
                 </button>
               </div>
             </div>

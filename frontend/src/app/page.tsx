@@ -14,7 +14,6 @@ import CityComparisonView from '../components/CityComparisonView';
 import HistoricalAnalyticsView from '../components/HistoricalAnalyticsView';
 import WeatherMapView from '../components/WeatherMapView';
 import OrbActionsDock from '../components/OrbActionsDock';
-import AtmosphericParticleCanvas from '../components/AtmosphericParticleCanvas';
 import DynamicIslandCapsule from '../components/DynamicIslandCapsule';
 import AudioBriefingPlayer from '../components/AudioBriefingPlayer';
 import TimeMachineScrubber from '../components/TimeMachineScrubber';
@@ -135,15 +134,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-white selection:text-black bg-[#030508]">
       
-      {/* Living Atmospheric Particle Canvas */}
-      <AtmosphericParticleCanvas
-        condition={forecast?.current.condition}
-        isDay={forecast?.current.isDay}
-        rainIntensity={forecast?.current.precipitation}
-      />
-
       {/* Dynamic Floating Telemetry Island (Apple VisionOS / Sequoia Capsule) */}
       <DynamicIslandCapsule
         city={city}
@@ -167,10 +159,10 @@ export default function Home() {
         onTogglePlay={handleToggleAudioBriefing}
       />
 
-      {/* Background Ambient Aurora Glow Orbs */}
-      <div className="fixed top-0 left-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-blue-600/15 via-indigo-600/10 to-transparent blur-[120px] pointer-events-none rounded-full -z-10" />
-      <div className="fixed top-72 right-1/4 w-[550px] h-[400px] bg-gradient-to-bl from-cyan-500/12 via-purple-600/10 to-transparent blur-[120px] pointer-events-none rounded-full -z-10" />
-      <div className="fixed bottom-10 left-1/3 w-[500px] h-[350px] bg-gradient-to-tr from-indigo-700/10 via-blue-500/10 to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
+      {/* Background Ambient Cosmic Starlight Glow Orbs */}
+      <div className="fixed top-0 left-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-white/[0.03] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
+      <div className="fixed top-72 right-1/4 w-[550px] h-[400px] bg-gradient-to-bl from-white/[0.02] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
+      <div className="fixed bottom-10 left-1/3 w-[500px] h-[350px] bg-gradient-to-tr from-white/[0.02] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
 
       {/* 1. Header / Navbar */}
       <Navbar
@@ -194,7 +186,11 @@ export default function Home() {
             {error && (
               <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm flex items-center justify-between shadow-lg">
                 <span className="flex items-center space-x-2">
-                  <span>⚠️</span>
+                  <svg className="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
                   <span>{error}</span>
                 </span>
                 <button

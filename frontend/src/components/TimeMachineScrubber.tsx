@@ -17,10 +17,8 @@ export default function TimeMachineScrubber({
   onSelectHour,
   selectedHourIndex,
 }: TimeMachineScrubberProps) {
-  // If hourly is empty, return null
   if (!hourly || hourly.length === 0) return null;
 
-  // We display the first 24 hours
   const hours24 = hourly.slice(0, 24);
 
   const activeIndex = selectedHourIndex !== null ? selectedHourIndex : 0;
@@ -35,10 +33,50 @@ export default function TimeMachineScrubber({
   const getTimePeriod = (timeStr: string) => {
     const d = new Date(timeStr);
     const hr = d.getHours();
-    if (hr >= 5 && hr < 8) return { label: 'Dawn Horizon', emoji: '🌅', color: 'from-amber-500/20 to-rose-500/20' };
-    if (hr >= 8 && hr < 17) return { label: 'Daylight Solar', emoji: '☀️', color: 'from-blue-500/20 to-cyan-500/20' };
-    if (hr >= 17 && hr < 20) return { label: 'Golden Sunset', emoji: '🌇', color: 'from-orange-500/20 to-purple-500/20' };
-    return { label: 'Cosmic Night', emoji: '🌙', color: 'from-indigo-600/20 to-purple-900/20' };
+    if (hr >= 5 && hr < 8) {
+      return {
+        label: 'Dawn Horizon',
+        icon: (
+          <svg className="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2v6M4.93 4.93l4.24 4.24M2 18h20M20 18a8 8 0 0 0-16 0" />
+          </svg>
+        ),
+      };
+    }
+    if (hr >= 8 && hr < 17) {
+      return {
+        label: 'Daylight Zenith',
+        icon: (
+          <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+          </svg>
+        ),
+      };
+    }
+    if (hr >= 17 && hr < 20) {
+      return {
+        label: 'Dusk Sunset',
+        icon: (
+          <svg className="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 10v6M4.93 10.93l4.24-4.24M2 18h20M20 18a8 8 0 0 0-16 0" />
+          </svg>
+        ),
+      };
+    }
+    return {
+      label: 'Cosmic Night',
+      icon: (
+        <svg className="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      ),
+    };
   };
 
   const period = getTimePeriod(activeItem.time);
@@ -61,29 +99,27 @@ export default function TimeMachineScrubber({
   };
 
   return (
-    <div className="w-full glass-card rounded-[2rem] p-5 sm:p-6 border border-white/[0.08] relative overflow-hidden backdrop-blur-2xl">
-      {/* Background Time Glow based on period */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-r ${period.color} opacity-40 blur-2xl -z-10 pointer-events-none transition-colors duration-700`}
-      />
-
+    <div className="w-full glass-card rounded-[2rem] p-5 sm:p-6 border border-white/[0.10] relative overflow-hidden backdrop-blur-3xl bg-[#080c14]/85">
       {/* Header bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-400/25 flex items-center justify-center text-sm shadow-inner">
-            ⏳
+          <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/15 flex items-center justify-center text-white text-xs shadow-inner">
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-black text-white tracking-tight">
-                24-Hour Atmospheric Time Scrubber
+              <span className="text-sm font-extrabold text-white tracking-tight">
+                24-Hour Atmospheric Timeline
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-mono font-bold border border-cyan-400/20">
-                INTERACTIVE
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.08] text-slate-300 font-mono font-bold border border-white/15">
+                SCRUBBER
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-medium">
-              Scrub the timeline to preview hourly solar trajectory &amp; temperature transitions
+              Preview hourly solar trajectory &amp; thermal transitions
             </p>
           </div>
         </div>
@@ -93,24 +129,26 @@ export default function TimeMachineScrubber({
           onClick={handleResetLive}
           className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-md ${
             isLive
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 shadow-emerald-500/20'
-              : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10 hover:text-white'
+              ? 'bg-white text-black font-extrabold shadow-white/10'
+              : 'bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 border border-white/15 hover:text-white'
           }`}
         >
-          <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
-          <span>{isLive ? 'Live Now' : 'Reset to Live'}</span>
+          <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-black animate-pulse' : 'bg-slate-500'}`} />
+          <span>{isLive ? 'Live Observation' : 'Reset to Live'}</span>
         </button>
       </div>
 
       {/* Active Scrubbed Hour Telemetry Pill */}
-      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-950/70 border border-white/[0.06] mb-5">
+      <div className="flex items-center justify-between p-3.5 rounded-2xl bg-black/50 border border-white/[0.08] mb-5">
         <div className="flex items-center space-x-3">
-          <span className="text-2xl">{period.emoji}</span>
+          <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center">
+            {period.icon}
+          </div>
           <div>
             <div className="text-xs font-extrabold text-white flex items-center space-x-2">
-              <span>{formatHourLabel(activeItem.time)}</span>
-              <span className="text-slate-500">•</span>
-              <span className="text-cyan-300">{period.label}</span>
+              <span className="font-mono">{formatHourLabel(activeItem.time)}</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-300">{period.label}</span>
             </div>
             <div className="text-[11px] text-slate-400">{activeItem.condition}</div>
           </div>
@@ -126,8 +164,8 @@ export default function TimeMachineScrubber({
             </div>
           </div>
           <div className="border-l border-white/10 pl-3 hidden sm:block">
-            <div className="text-xs font-bold text-blue-300">{activeItem.precipitationProbability}% Rain</div>
-            <div className="text-[10px] text-slate-400">{activeItem.windSpeed} km/h Wind</div>
+            <div className="text-xs font-bold text-slate-300">{activeItem.precipitationProbability}% Rain</div>
+            <div className="text-[10px] text-slate-400 font-mono">{activeItem.windSpeed} km/h</div>
           </div>
         </div>
       </div>
@@ -141,11 +179,11 @@ export default function TimeMachineScrubber({
           value={activeIndex}
           onChange={handleSliderChange}
           aria-label="24-Hour Time Scrubber"
-          className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 shadow-inner"
+          className="w-full h-2 bg-white/[0.08] rounded-lg appearance-none cursor-pointer accent-white focus:outline-none shadow-inner"
         />
 
         {/* Micro Hour Labels */}
-        <div className="flex justify-between text-[10px] font-mono text-slate-500 px-1 select-none">
+        <div className="flex justify-between text-[10px] font-mono text-slate-400 px-1 select-none">
           <span>{formatHourLabel(hours24[0].time)}</span>
           <span className="hidden sm:inline">{formatHourLabel(hours24[Math.floor(hours24.length * 0.25)].time)}</span>
           <span>{formatHourLabel(hours24[Math.floor(hours24.length * 0.5)].time)}</span>
