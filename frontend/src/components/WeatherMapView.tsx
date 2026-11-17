@@ -189,8 +189,7 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
                 opacity: 0.65,
                 zIndex: 100,
                 minZoom: 1,
-                maxZoom: 18,
-                maxNativeZoom: 7 // Critical: Upscales level-7 radar tiles to prevent RainViewer's "zoom level not supported" error
+                maxZoom: 7 // Regional radar view (strictly caps at level 7 so RainViewer never sends "zoom level not supported" error)
               });
               radar.addTo(map);
               radarLayerRef.current = radar;
@@ -375,24 +374,29 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
 
         {/* Floating Radar Intensity Legend */}
         {showRadar && (
-          <div className="absolute bottom-4 right-4 z-10 p-3 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] text-slate-300 flex items-center space-x-2 shadow-2xl">
-            <span className="font-bold text-slate-400">Doppler Intensity:</span>
-            <div className="flex items-center space-x-1">
-              <span className="w-3 h-3 rounded-sm bg-cyan-400 inline-block" />
-              <span className="text-[9px]">Light</span>
+          <div className="absolute bottom-4 right-4 z-10 p-3 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] text-slate-300 flex flex-col sm:flex-row items-start sm:items-center gap-2 shadow-2xl">
+            <div className="flex items-center space-x-1.5">
+              <span className="font-bold text-slate-400">Doppler Radar:</span>
+              <div className="flex items-center space-x-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-cyan-400 inline-block" />
+                <span className="text-[9px]">Light</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block" />
+                <span className="text-[9px]">Mod</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-purple-500 inline-block" />
+                <span className="text-[9px]">Heavy</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" />
+                <span className="text-[9px]">Severe</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <span className="w-3 h-3 rounded-sm bg-blue-500 inline-block" />
-              <span className="text-[9px]">Moderate</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span className="w-3 h-3 rounded-sm bg-purple-500 inline-block" />
-              <span className="text-[9px]">Heavy</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span className="w-3 h-3 rounded-sm bg-red-500 inline-block" />
-              <span className="text-[9px]">Severe</span>
-            </div>
+            <span className="hidden md:inline text-[9px] text-slate-400 border-l border-slate-700/80 pl-2">
+              (Radar active at regional scale 1-7; auto-focuses on sharp base map when zoomed in)
+            </span>
           </div>
         )}
       </div>
