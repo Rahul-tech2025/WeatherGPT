@@ -2,7 +2,11 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL =
+  process.env.ML_SERVICE_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://weathergpt-ml.onrender.com'
+    : 'http://localhost:8000');
 const WEATHER_API_URL = process.env.OPEN_METEO_API_URL || 'https://api.open-meteo.com/v1';
 
 // Path to pre-generated metrics fallback if ML service is unreachable

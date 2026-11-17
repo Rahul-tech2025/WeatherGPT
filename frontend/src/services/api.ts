@@ -1,6 +1,10 @@
 import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary } from '../types/weather';
 
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const BACKEND_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    ? 'https://weathergpt-backend-7ws6.onrender.com/api'
+    : 'http://localhost:5000/api');
 
 /**
  * Search cities using backend API with fallback to Open-Meteo Geocoding directly
