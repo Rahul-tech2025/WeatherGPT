@@ -30,7 +30,7 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
 
   if (!daily || daily.length === 0) return null;
 
-  // Find min and max across all 7 days for relative temp bar scaling
+  // Global scale for temperature bar
   const allMins = daily.map(d => d.tempMin);
   const allMaxs = daily.map(d => d.tempMax);
   const globalMin = Math.min(...allMins);
@@ -38,69 +38,76 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
   const range = globalMax - globalMin || 1;
 
   return (
-    <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-xl">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <span className="text-lg">📅</span>
-          <h2 className="text-base font-bold text-white tracking-tight">7-Day Forecast</h2>
+    <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
+            📅
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white tracking-tight">7-Day Outlook</h2>
+            <p className="text-[11px] text-slate-400 font-medium">Weekly synoptic progression & min/max spread</p>
+          </div>
         </div>
-        <span className="text-xs text-slate-400 font-medium">Daily Highs & Lows</span>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+          Normalized Spread
+        </span>
       </div>
 
-      <div className="divide-y divide-slate-800/80">
+      <div className="divide-y divide-white/[0.04]">
         {daily.map((item, index) => {
           const isToday = index === 0;
-
-          // Calculate bar percentage
           const leftPercent = Math.max(0, ((item.tempMin - globalMin) / range) * 100);
-          const barWidth = Math.max(15, ((item.tempMax - item.tempMin) / range) * 100);
+          const barWidth = Math.max(16, ((item.tempMax - item.tempMin) / range) * 100);
 
           return (
             <div
               key={item.date}
-              className={`py-3.5 flex items-center justify-between gap-3 text-sm transition-colors ${
-                isToday ? 'bg-blue-600/5 px-2 rounded-xl' : 'hover:bg-slate-800/30 px-2 rounded-xl'
+              className={`py-3.5 px-3 flex items-center justify-between gap-4 text-sm rounded-2xl transition-all duration-200 ${
+                isToday 
+                  ? 'bg-blue-600/[0.08] border border-blue-500/20 shadow-sm' 
+                  : 'hover:bg-white/[0.03]'
               }`}
             >
               {/* Day Name */}
-              <div className="w-20 font-semibold text-slate-200 flex items-center space-x-1.5">
-                <span className={isToday ? 'text-blue-400 font-bold' : ''}>
+              <div className="w-20 font-bold text-slate-200 flex items-center space-x-2">
+                <span className={isToday ? 'text-cyan-300 font-black' : 'text-slate-300'}>
                   {formatDayName(item.date, index)}
                 </span>
                 {isToday && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400" />
                 )}
               </div>
 
               {/* Weather Icon & Condition */}
-              <div className="flex items-center space-x-3 w-40">
-                <WeatherIcon icon={item.icon} className="w-6 h-6 flex-shrink-0" />
-                <span className="text-xs text-slate-300 truncate hidden sm:inline">
+              <div className="flex items-center space-x-3 w-36 sm:w-44">
+                <WeatherIcon icon={item.icon} className="w-7 h-7 flex-shrink-0 filter drop-shadow" />
+                <span className="text-xs text-slate-300 font-medium truncate hidden sm:inline">
                   {item.condition}
                 </span>
               </div>
 
-              {/* Rain Chance */}
+              {/* Precipitation Probability */}
               <div className="w-16 text-right">
                 {item.precipitationProbabilityMax > 0 ? (
-                  <span className="text-xs font-semibold text-sky-400 flex items-center justify-end space-x-0.5">
-                    <span>💧</span>
+                  <span className="text-xs font-bold text-cyan-400 flex items-center justify-end space-x-1">
+                    <span className="text-[10px]">💧</span>
                     <span>{item.precipitationProbabilityMax}%</span>
                   </span>
                 ) : (
-                  <span className="text-xs text-slate-500">—</span>
+                  <span className="text-xs text-slate-600 font-mono">—</span>
                 )}
               </div>
 
-              {/* Temperature Bar Visualizer */}
-              <div className="flex-1 max-w-[200px] flex items-center space-x-2">
-                <span className="text-xs text-slate-400 font-medium w-8 text-right">
+              {/* High-End Temperature Range Bar (Apple Weather Style) */}
+              <div className="flex-1 max-w-[220px] flex items-center space-x-2.5">
+                <span className="text-xs text-slate-400 font-semibold w-8 text-right font-mono">
                   {formatTemp(item.tempMin)}
                 </span>
 
-                <div className="flex-1 h-2 bg-slate-800 rounded-full relative overflow-hidden">
+                <div className="flex-1 h-2 bg-slate-900/90 rounded-full relative overflow-hidden border border-white/[0.06] shadow-inner">
                   <div
-                    className="absolute top-0 bottom-0 rounded-full bg-gradient-to-r from-blue-500 via-amber-400 to-rose-500"
+                    className="absolute top-0 bottom-0 rounded-full bg-gradient-to-r from-cyan-400 via-amber-300 to-rose-400 shadow-sm"
                     style={{
                       left: `${leftPercent}%`,
                       width: `${barWidth}%`
@@ -108,7 +115,7 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
                   />
                 </div>
 
-                <span className="text-xs text-white font-bold w-8 text-left">
+                <span className="text-xs text-white font-black w-8 text-left font-mono">
                   {formatTemp(item.tempMax)}
                 </span>
               </div>

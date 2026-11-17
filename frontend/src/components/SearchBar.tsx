@@ -44,7 +44,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectCity, currentCityN
       } finally {
         setIsLoading(false);
       }
-    }, 350);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -91,13 +91,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectCity, currentCityN
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto relative mb-6" ref={dropdownRef}>
+    <div className="w-full max-w-2xl mx-auto relative mb-7" ref={dropdownRef}>
       
-      {/* Search Input Box */}
-      <div className="relative flex items-center">
-        <div className="absolute left-4 text-slate-400 pointer-events-none">
+      {/* Command Bar Search Container */}
+      <div className="relative flex items-center group">
+        <div className="absolute left-4.5 text-slate-400 group-focus-within:text-cyan-400 transition-colors pointer-events-none">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
 
@@ -106,49 +106,49 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectCity, currentCityN
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length >= 2 && setIsOpen(true)}
-          placeholder={`Search city or country (current: ${currentCityName})...`}
-          className="w-full pl-12 pr-28 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-xl shadow-black/20 text-sm font-medium"
+          placeholder={`Search global city or coordinates (current: ${currentCityName})...`}
+          className="w-full pl-12 pr-28 py-4 bg-slate-900/60 backdrop-blur-2xl border border-white/[0.08] hover:border-white/15 focus:border-cyan-500/50 rounded-2xl text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-cyan-500/15 transition-all shadow-2xl text-sm font-medium"
         />
 
-        <div className="absolute right-3 flex items-center space-x-1.5">
+        <div className="absolute right-3.5 flex items-center space-x-2">
           {isLoading && (
-            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-1"></div>
+            <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
           )}
           <button
             type="button"
             onClick={handleLocateMe}
-            title="Use My Location"
-            className="flex items-center space-x-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-semibold transition border border-slate-700"
+            title="Auto-detect GPS location"
+            className="flex items-center space-x-1 px-3 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white rounded-xl text-xs font-semibold transition border border-white/10 shadow-sm"
           >
             <span>📍</span>
-            <span className="hidden sm:inline">GPS</span>
+            <span className="hidden sm:inline font-bold">GPS</span>
           </button>
         </div>
       </div>
 
-      {/* Autocomplete Dropdown */}
+      {/* Autocomplete Glass Dropdown */}
       {isOpen && results.length > 0 && (
-        <div className="absolute left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl z-50 overflow-hidden divide-y divide-slate-800">
-          <div className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 bg-slate-800/40">
-            Suggested Locations
+        <div className="absolute left-0 right-0 mt-2 bg-slate-950/90 backdrop-blur-3xl border border-white/[0.1] rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.8)] z-50 overflow-hidden divide-y divide-white/[0.04] animate-in fade-in zoom-in-95 duration-200">
+          <div className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-white/[0.02]">
+            Suggested Metropolises
           </div>
-          <div className="max-h-64 overflow-y-auto">
+          <div className="max-h-72 overflow-y-auto">
             {results.map((city) => (
               <button
                 key={`${city.id}-${city.name}-${city.latitude}`}
                 onClick={() => handleSelect(city)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-blue-600/10 hover:border-l-4 hover:border-blue-500 text-left transition duration-150 group"
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-cyan-500/10 hover:border-l-4 hover:border-cyan-400 text-left transition duration-150 group"
               >
                 <div>
-                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 text-sm flex items-center space-x-2">
+                  <div className="font-bold text-slate-100 group-hover:text-cyan-300 text-sm flex items-center space-x-2">
                     <span>{city.name}</span>
                     {city.countryCode && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-300 font-mono font-bold">
                         {city.countryCode}
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-slate-400 mt-0.5">
                     {[city.admin1, city.country].filter(Boolean).join(', ')}
                   </div>
                 </div>
@@ -161,9 +161,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectCity, currentCityN
         </div>
       )}
 
-      {/* Quick Select Chips */}
-      <div className="flex items-center space-x-2 mt-3 overflow-x-auto pb-1 text-xs no-scrollbar">
-        <span className="text-slate-400 font-medium text-[11px] whitespace-nowrap">Popular:</span>
+      {/* Quick Select Region Pills */}
+      <div className="flex items-center space-x-2 mt-3.5 overflow-x-auto pb-1 text-xs no-scrollbar">
+        <span className="text-slate-400 font-bold text-[10px] uppercase tracking-wider whitespace-nowrap pl-1">Popular:</span>
         {quickCities.map((c) => (
           <button
             key={c.name}
@@ -181,7 +181,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSelectCity, currentCityN
                 population: 0
               })
             }
-            className="px-2.5 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-300 hover:text-white whitespace-nowrap transition duration-150"
+            className="px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-cyan-500/30 text-slate-300 hover:text-white whitespace-nowrap transition duration-200 font-medium"
           >
             {c.name}
           </button>
