@@ -13,6 +13,26 @@ interface WeatherMapViewProps {
   onSelectCity?: (city: CitySearchResult) => void;
 }
 
+type MapLayerType = 'dark' | 'standard' | 'satellite';
+
+const TILE_SERVERS: Record<MapLayerType, { url: string; attribution: string; maxZoom: number }> = {
+  dark: {
+    url: 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+    maxZoom: 16
+  },
+  standard: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
+  },
+  satellite: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+    maxZoom: 18
+  }
+};
+
 export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -22,14 +42,14 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
   const [forecast, setForecast] = useState<ForecastData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showRadar, setShowRadar] = useState<boolean>(true);
-  const [mapLayer, setMapLayer] = useState<'standard' | 'dark' | 'satellite'>('dark');
+  const [mapLayer, setMapLayer] = useState<MapLayerType>('dark');
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lon: number; name: string }>({
     lat: city.latitude,
     lon: city.longitude,
     name: city.name
   });
 
-  // Fetch forecast for marker
+  // Fetch forecast for clicked marker coordinate
   const loadCoordsWeather = async (lat: number, lon: number, name: string) => {
     setIsLoading(true);
     try {
@@ -47,12 +67,41 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
     loadCoordsWeather(city.latitude, city.longitude, city.name);
   }, [city]);
 
+  // Switch between Dark, Standard, and Satellite tile layers
+  const changeMapLayer = (layerKey: MapLayerType) => {
+    setMapLayer(layerKey);
+    const map = mapInstanceRef.current;
+    const L = (window as any).L;
+    if (!map || !L) return;
+
+    if (map._currentTileLayer) {
+      map.removeLayer(map._currentTileLayer);
+    }
+
+    const conf = TILE_SERVERS[layerKey];
+    const newTileLayer = L.tileLayer(conf.url, {
+      attribution: conf.attribution,
+      maxZoom: conf.maxZoom
+    });
+
+    newTileLayer.addTo(map);
+    map._currentTileLayer = newTileLayer;
+
+    // Keep radar and marker on top of the new basemap
+    if (radarLayerRef.current && showRadar) {
+      radarLayerRef.current.bringToFront();
+    }
+    if (markerRef.current) {
+      markerRef.current.setZIndexOffset(1000);
+    }
+  };
+
   // Load Leaflet dynamically via CDN to prevent SSR window issues
   useEffect(() => {
     let isMounted = true;
 
     const loadLeaflet = async () => {
-      // Add CSS if not present
+      // Add Leaflet CSS if not present
       if (!document.getElementById('leaflet-css')) {
         const link = document.createElement('link');
         link.id = 'leaflet-css';
@@ -61,7 +110,7 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
         document.head.appendChild(link);
       }
 
-      // Add JS if not present
+      // Add Leaflet JS if not present
       if (!(window as any).L) {
         await new Promise((resolve) => {
           const script = document.createElement('script');
@@ -77,20 +126,23 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
       if (!mapInstanceRef.current) {
         // Initialize Map
         const map = L.map(mapContainerRef.current, {
-          zoomControl: false
+          zoomControl: false,
+          minZoom: 3,
+          maxZoom: 18
         }).setView([city.latitude, city.longitude], 8);
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        // Tile layer
-        const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-          maxZoom: 19
+        // Tile layer (Free, High-Resolution, Zero API Keys)
+        const initialConf = TILE_SERVERS[mapLayer];
+        const tileLayer = L.tileLayer(initialConf.url, {
+          attribution: initialConf.attribution,
+          maxZoom: initialConf.maxZoom
         }).addTo(map);
 
         (map as any)._currentTileLayer = tileLayer;
 
-        // Custom Marker
+        // Custom Glowing Pulse Marker
         const customIcon = L.divIcon({
           className: 'custom-weather-marker',
           html: `<div style="
@@ -103,21 +155,24 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
             justify-content: center;
             color: white;
             font-size: 18px;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.6);
             border: 2px solid white;
           ">📍</div>`,
           iconSize: [36, 36],
           iconAnchor: [18, 36]
         });
 
-        const marker = L.marker([city.latitude, city.longitude], { icon: customIcon }).addTo(map);
+        const marker = L.marker([city.latitude, city.longitude], {
+          icon: customIcon,
+          zIndexOffset: 1000
+        }).addTo(map);
         markerRef.current = marker;
 
         // Map Click Listener
         map.on('click', async (e: any) => {
           const { lat, lng } = e.latlng;
           marker.setLatLng([lat, lng]);
-          const locationName = `Location (${lat.toFixed(2)}°, ${lng.toFixed(2)}°)`;
+          const locationName = `Coordinates (${lat.toFixed(2)}°, ${lng.toFixed(2)}°)`;
           loadCoordsWeather(lat, lng, locationName);
         });
 
@@ -142,12 +197,17 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
         }
 
         mapInstanceRef.current = map;
+
+        // Trigger size invalidation to guarantee full container rendering
+        setTimeout(() => map.invalidateSize(), 200);
+        setTimeout(() => map.invalidateSize(), 600);
       } else {
-        // Update view
+        // Update view when city prop changes
         mapInstanceRef.current.setView([city.latitude, city.longitude], 8);
         if (markerRef.current) {
           markerRef.current.setLatLng([city.latitude, city.longitude]);
         }
+        setTimeout(() => mapInstanceRef.current?.invalidateSize(), 150);
       }
     };
 
@@ -158,7 +218,7 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
     };
   }, [city.latitude, city.longitude]);
 
-  // Toggle Radar Layer
+  // Toggle Radar Layer on/off
   const toggleRadar = () => {
     if (!radarLayerRef.current || !mapInstanceRef.current) return;
     if (showRadar) {
@@ -174,23 +234,58 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
 
   return (
     <div className="space-y-6">
-      {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl">
+      {/* Header & Controls Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-xl">
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-xl">🗺️</span>
-            <h2 className="text-xl font-bold text-white tracking-tight">Interactive Weather Radar & Map</h2>
+            <h2 className="text-xl font-bold text-white tracking-tight">Interactive Weather Radar & GIS Map</h2>
             <span className="px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              Live Satellite Overlay
+              Live Doppler Overlay
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Click anywhere on the map to inspect live microclimate forecasts or track precipitation radar.
+            Click anywhere on the globe to inspect real-time microclimates or track precipitation storm clusters.
           </p>
         </div>
 
-        {/* Radar Toggle Button */}
-        <div className="flex items-center space-x-3">
+        {/* Map Controls: Layer Selector & Radar Toggle */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Layer Selector */}
+          <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
+            <button
+              onClick={() => changeMapLayer('dark')}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                mapLayer === 'dark'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              🌑 Dark
+            </button>
+            <button
+              onClick={() => changeMapLayer('satellite')}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                mapLayer === 'satellite'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              🛰️ Satellite
+            </button>
+            <button
+              onClick={() => changeMapLayer('standard')}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                mapLayer === 'standard'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              🗺️ Street
+            </button>
+          </div>
+
+          {/* Radar Toggle Button */}
           <button
             onClick={toggleRadar}
             className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all ${
@@ -206,18 +301,18 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
       </div>
 
       {/* Main Map Container & Floating Weather Inspector */}
-      <div className="relative w-full h-[580px] rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
+      <div className="relative w-full h-[600px] rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
         {/* Leaflet DOM Anchor */}
         <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-        {/* Floating Weather Inspector Card */}
-        <div className="absolute top-4 left-4 z-10 max-w-xs sm:max-w-sm w-full p-4 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-slate-800/90 shadow-2xl text-white">
+        {/* Floating Weather Inspector HUD */}
+        <div className="absolute top-4 left-4 z-10 max-w-xs sm:max-w-sm w-full p-4 rounded-2xl bg-slate-950/90 backdrop-blur-md border border-slate-800/90 shadow-2xl text-white">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Inspected Region</div>
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Inspected Location</div>
               <h3 className="text-base font-bold text-white truncate">{selectedCoords.name}</h3>
             </div>
-            <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-800/40">
+            <span className="text-xs font-mono text-cyan-400 bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-800/40">
               {selectedCoords.lat.toFixed(2)}°, {selectedCoords.lon.toFixed(2)}°
             </span>
           </div>
@@ -270,14 +365,14 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
           )}
 
           <div className="mt-3 pt-2 border-t border-slate-800/60 text-[10px] text-slate-400 text-center">
-            💡 Tip: Click anywhere across the country to fetch hyper-local data
+            💡 Tip: Click anywhere across the map to fetch real-time microclimate data
           </div>
         </div>
 
-        {/* Floating Radar Legend */}
+        {/* Floating Radar Intensity Legend */}
         {showRadar && (
-          <div className="absolute bottom-4 right-4 z-10 p-3 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[10px] text-slate-300 flex items-center space-x-2">
-            <span className="font-bold text-slate-400">Radar Intensity:</span>
+          <div className="absolute bottom-4 right-4 z-10 p-3 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] text-slate-300 flex items-center space-x-2 shadow-2xl">
+            <span className="font-bold text-slate-400">Doppler Intensity:</span>
             <div className="flex items-center space-x-1">
               <span className="w-3 h-3 rounded-sm bg-cyan-400 inline-block" />
               <span className="text-[9px]">Light</span>
