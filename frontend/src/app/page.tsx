@@ -13,6 +13,7 @@ import AIChatView from '../components/AIChatView';
 import CityComparisonView from '../components/CityComparisonView';
 import HistoricalAnalyticsView from '../components/HistoricalAnalyticsView';
 import WeatherMapView from '../components/WeatherMapView';
+import OrbActionsDock from '../components/OrbActionsDock';
 import { getForecast, getMLPrediction, getMLMetrics } from '../services/api';
 import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary } from '../types/weather';
 
@@ -141,6 +142,16 @@ export default function Home() {
                   todayDaily={forecast.daily[0]}
                   unit={unit}
                 />
+
+                {/* Futuristic Glowing Orb Action Dock */}
+                <div className="flex flex-col items-center justify-center -my-1">
+                  <OrbActionsDock
+                    city={city}
+                    forecast={forecast}
+                    mlPrediction={mlPrediction}
+                    onNavigateTab={(tab) => setActiveTab(tab)}
+                  />
+                </div>
 
                 {/* 24-Hour Hourly Strip */}
                 <HourlyForecast hourly={forecast.hourly} unit={unit} />

@@ -96,3 +96,253 @@
     text-wrap: balance;
   }
 }
+
+
+/* ========================================================
+   FUTURISTIC ORB BUTTON STACK (RESPONSIVE & ANIMATED)
+   ======================================================== */
+
+.button-stack {
+  display: flex;
+  gap: 2em;
+  padding: 1.5em;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.button-stack.stack-vertical {
+  flex-direction: column;
+}
+
+.btn-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  opacity: 0;
+  animation: floatIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.btn-wrapper:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.btn-wrapper:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.btn-wrapper:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes floatIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.btn-wrapper:hover {
+  z-index: 20;
+}
+
+.orb-btn {
+  position: relative;
+  width: 4.25em;
+  height: 4.25em;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(var(--glow-color), 0.12) 50%,
+    rgba(var(--glow-color), 0.45) 100%
+  );
+  box-shadow:
+    inset 0 0 25px 2px rgba(var(--glow-color), 0.4),
+    inset 0 0 8px 1px rgba(var(--glow-color), 0.7),
+    0 0 35px 2px rgba(var(--glow-color), 0.3);
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+.orb-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: inset 1px 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.orb-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.btn-wrapper:hover .orb-btn::after {
+  animation: shimmerSweep 0.8s ease-out forwards;
+}
+
+@keyframes shimmerSweep {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+.btn-wrapper:hover .orb-btn {
+  transform: scale(1.08);
+  box-shadow:
+    inset 0 0 32px 4px rgba(var(--glow-color), 0.55),
+    inset 0 0 14px 2px rgba(var(--glow-color), 0.85),
+    0 0 50px 8px rgba(var(--glow-color), 0.45);
+}
+
+.btn-wrapper:active .orb-btn {
+  transform: scale(0.92);
+  box-shadow:
+    inset 0 0 35px 5px rgba(var(--glow-color), 0.8),
+    inset 0 0 15px 4px rgba(255, 255, 255, 0.7),
+    0 0 30px 5px rgba(var(--glow-color), 0.4);
+}
+
+.orb-btn svg {
+  width: 1.85em;
+  height: 1.85em;
+  stroke: #ffffff;
+  stroke-width: 1.75;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  z-index: 2;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-wrapper:hover .btn-teal svg {
+  transform: scale(1.18) rotate(180deg);
+}
+
+@keyframes arrowFly {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  40% {
+    transform: translate(18px, -18px);
+    opacity: 0;
+  }
+  41% {
+    transform: translate(-18px, 18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(2px, -2px);
+    opacity: 1;
+  }
+}
+
+.btn-wrapper:hover .btn-silver svg {
+  animation: arrowFly 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.btn-mauve svg path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes drawCheck {
+  0% {
+    stroke-dashoffset: 40;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.btn-wrapper:hover .btn-mauve svg {
+  transform: scale(1.2);
+}
+
+.btn-wrapper:hover .btn-mauve svg path {
+  animation: drawCheck 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tooltip / Hover label */
+.btn-label {
+  position: absolute;
+  top: 105%;
+  margin-top: 0.5em;
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(-6px) scale(0.95);
+  filter: blur(4px);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  background: rgba(10, 16, 30, 0.85);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-wrapper:hover .btn-label {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
+  letter-spacing: 3px;
+}
+
+/* Colors with rich glowing variables */
+.btn-teal {
+  --glow-color: 6, 182, 212;
+}
+
+.btn-silver {
+  --glow-color: 147, 197, 253;
+}
+
+.btn-mauve {
+  --glow-color: 192, 132, 252;
+}
