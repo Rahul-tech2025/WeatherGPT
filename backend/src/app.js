@@ -3,6 +3,10 @@ const cors = require('cors');
 require('dotenv').config();
 
 const weatherRoutes = require('./routes/weather.routes');
+const mlRoutes = require('./routes/ml.routes');
+const aiRoutes = require('./routes/ai.routes');
+const authRoutes = require('./routes/auth.routes');
+const alertRoutes = require('./routes/alert.routes');
 
 const app = express();
 
@@ -26,6 +30,18 @@ app.get('/api/health', (req, res) => {
 
 // Weather API Routes
 app.use('/api/weather', weatherRoutes);
+
+// Machine Learning API Routes
+app.use('/api/ml', mlRoutes);
+
+// Gemini Conversational AI Routes
+app.use('/api/ai', aiRoutes);
+
+// User Authentication & Favorites Routes
+app.use('/api/auth', authRoutes);
+
+// Weather Alert Thresholds Routes
+app.use('/api/alerts', alertRoutes);
 
 // Central 404 Route Handler
 app.use((req, res) => {

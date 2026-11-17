@@ -1,4 +1,4 @@
-import { CitySearchResult, ForecastData } from '../types/weather';
+import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary } from '../types/weather';
 
 const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -167,4 +167,140 @@ export async function getForecast(latitude: number, longitude: number): Promise<
     hourly: hourlyData,
     daily: dailyData
   };
+}
+
+
+/**
+ * Fetch custom Scikit-Learn next-day predictions for a given location
+ */
+export async function getMLPrediction(latitude: number, longitude: number, city: string = 'Current Location'): Promise<MLPredictionData | null> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/ml/predict?lat=${latitude}&lon=${longitude}&city=${encodeURIComponent(city)}`);
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+  } catch (err) {
+    console.warn('Backend ML prediction API unreachable:', err);
+  }
+  return null;
+}
+
+/**
+ * Fetch model benchmarks and algorithm comparisons
+ */
+export async function getMLMetrics(): Promise<MLMetricsSummary | null> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/ml/metrics`);
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+  } catch (err) {
+    console.warn('Backend ML metrics API unreachable:', err);
+  }
+  return null;
+}
+
+
+/**
+ * Send conversational query to WeatherGPT Gemini Assistant
+ */
+export async function sendAIChatMessage(
+  message: string,
+  city: string,
+  latitude: number,
+  longitude: number
+): Promise<{ reply: string; provider: string; grounding: unknown }> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/ai/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, city, latitude, longitude })
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+  } catch (err) {
+    console.warn('Backend AI chat API unreachable:', err);
+  }
+
+  // Graceful direct fallback if backend is offline
+  return {
+    reply: `🌤️ In ${city}, current conditions are active. The WeatherGPT backend API is currently in standby. Please ensure the backend server is running on port 5000!`,
+    provider: 'Local Standby Engine',
+    grounding: null
+  };
+}
+
+
+export interface HistoricalWeatherRecord {
+  date: string;
+  tempMean: number;
+  tempMax: number;
+  tempMin: number;
+  precipitation: number;
+  rain: number;
+  windSpeedMax: number;
+}
+
+export interface HistoricalWeatherResponse {
+  latitude: number;
+  longitude: number;
+  startDate: string;
+  endDate: string;
+  records: HistoricalWeatherRecord[];
+}
+
+/**
+ * Fetch past weather trends for analytics
+ */
+export async function getHistoricalWeather(
+  latitude: number,
+  longitude: number,
+  days: number = 14
+): Promise<HistoricalWeatherResponse | null> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/weather/history?lat=${latitude}&lon=${longitude}&days=${days}`);
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+  } catch (err) {
+    console.warn('Backend history API unreachable, attempting direct provider fallback:', err);
+  }
+
+  // Direct Open-Meteo fallback using past_days
+  try {
+    const directUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&past_days=${days}&forecast_days=0&daily=temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum,rain_sum,wind_speed_10m_max&timezone=auto`;
+    const res = await fetch(directUrl);
+    if (res.ok) {
+      const data = await res.json();
+      const daily = data.daily;
+      const records: HistoricalWeatherRecord[] = [];
+      for (let i = 0; i < daily.time.length; i++) {
+        records.push({
+          date: daily.time[i],
+          tempMean: daily.temperature_2m_mean[i],
+          tempMax: daily.temperature_2m_max[i],
+          tempMin: daily.temperature_2m_min[i],
+          precipitation: daily.precipitation_sum[i],
+          rain: daily.rain_sum[i],
+          windSpeedMax: daily.wind_speed_10m_max[i]
+        });
+      }
+      return {
+        latitude: data.latitude,
+        longitude: data.longitude,
+        startDate: daily.time[0],
+        endDate: daily.time[daily.time.length - 1],
+        records
+      };
+    }
+  } catch (directErr) {
+    console.error('All historical data lookups failed:', directErr);
+  }
+
+  return null;
 }

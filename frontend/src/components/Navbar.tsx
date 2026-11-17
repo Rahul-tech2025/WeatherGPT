@@ -22,6 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'chat', label: 'AI Assistant', icon: '🤖', badge: 'Gemini' },
     { id: 'compare', label: 'City Compare', icon: '⚖️' },
     { id: 'history', label: 'Analytics', icon: '📈' },
+    { id: 'map', label: 'Live Radar', icon: '🗺️' },
   ];
 
   return (
