@@ -9,11 +9,7 @@ interface DynamicIslandCapsuleProps {
   forecast: ForecastData | null;
   mlPrediction: MLPredictionData | null;
   unit: 'C' | 'F';
-  currentTheme: 'obsidian' | 'titanium' | 'cyberpunk';
-  onThemeChange: (theme: 'obsidian' | 'titanium' | 'cyberpunk') => void;
   onNavigateTab: (tab: string) => void;
-  onPlayAudioBriefing?: () => void;
-  isPlayingAudio?: boolean;
 }
 
 export default function DynamicIslandCapsule({
@@ -21,11 +17,7 @@ export default function DynamicIslandCapsule({
   forecast,
   mlPrediction,
   unit,
-  currentTheme,
-  onThemeChange,
   onNavigateTab,
-  onPlayAudioBriefing,
-  isPlayingAudio = false,
 }: DynamicIslandCapsuleProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -39,15 +31,20 @@ export default function DynamicIslandCapsule({
     <div className="relative z-30 pointer-events-auto flex justify-center w-full my-1">
       <div
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`relative cursor-pointer select-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+        className={`relative cursor-pointer select-none overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isExpanded
-            ? 'w-[92vw] sm:w-[480px] p-5 rounded-[2.2rem] bg-[#070b12]/95 border border-white/25 shadow-2xl shadow-black/90 backdrop-blur-3xl'
+            ? 'w-[94vw] sm:w-[500px] p-5 rounded-[2rem] bg-[#060910]/95 border border-white/25 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.95)] backdrop-blur-3xl'
             : 'w-auto px-5 py-2.5 rounded-full bg-[#080c14]/90 hover:bg-[#0c121e] border border-white/15 hover:border-white/35 shadow-xl shadow-black/70 backdrop-blur-2xl'
         }`}
       >
         {/* COMPACT STATE */}
-        {!isExpanded && (
-          <div className="flex items-center space-x-3 text-xs">
+        {!isExpanded ? (
+          <div className="flex items-center space-x-3 text-xs transition-opacity duration-300">
             {/* Live Indicator Dot */}
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
@@ -68,17 +65,6 @@ export default function DynamicIslandCapsule({
               {forecast.current.condition}
             </span>
 
-            {/* Audio pulse badge if playing */}
-            {isPlayingAudio && (
-              <span className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-white text-[10px] animate-pulse">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                </svg>
-                <span>Voice Active</span>
-              </span>
-            )}
-
             {/* Chevron toggle icon */}
             <svg
               className="w-3.5 h-3.5 text-slate-400 transition-transform duration-300 group-hover:text-white"
@@ -89,13 +75,11 @@ export default function DynamicIslandCapsule({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
-        )}
-
-        {/* EXPANDED TELEMETRY ISLAND */}
-        {isExpanded && (
+        ) : (
+          /* EXPANDED TELEMETRY ISLAND */
           <div
             onClick={(e) => e.stopPropagation()}
-            className="space-y-4 animate-in fade-in zoom-in-95 duration-300"
+            className="space-y-4 transition-all duration-300 ease-out"
           >
             {/* Header: Location & Close Button */}
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
@@ -110,7 +94,8 @@ export default function DynamicIslandCapsule({
               </div>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition"
+                className="w-6 h-6 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400 hover:text-white transition"
+                aria-label="Close Telemetry Capsule"
               >
                 ✕
               </button>
@@ -153,27 +138,12 @@ export default function DynamicIslandCapsule({
 
             {/* Quick Action Dock Buttons */}
             <div className="flex items-center gap-2 pt-1">
-              {onPlayAudioBriefing && (
-                <button
-                  onClick={() => {
-                    onPlayAudioBriefing();
-                  }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-200 text-black font-extrabold text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all hover:scale-[1.02]"
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  </svg>
-                  <span>{isPlayingAudio ? 'Stop Audio' : 'Voice Briefing'}</span>
-                </button>
-              )}
-
               <button
                 onClick={() => {
                   onNavigateTab('chat');
                   setIsExpanded(false);
                 }}
-                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
+                className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-200 text-black font-extrabold text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all hover:scale-[1.02]"
               >
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -193,45 +163,23 @@ export default function DynamicIslandCapsule({
                   <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
                   <path d="M2 12h20" />
                 </svg>
-                <span>Radar</span>
+                <span>Radar Map</span>
               </button>
-            </div>
 
-            {/* Theme Aesthetic Selector */}
-            <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-xs text-slate-400">
-              <span className="font-semibold text-[11px]">Space Theme:</span>
-              <div className="flex items-center space-x-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
-                <button
-                  onClick={() => onThemeChange('obsidian')}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
-                    currentTheme === 'obsidian'
-                      ? 'bg-white text-black shadow-sm font-extrabold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Deep Space
-                </button>
-                <button
-                  onClick={() => onThemeChange('titanium')}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
-                    currentTheme === 'titanium'
-                      ? 'bg-white text-black shadow-sm font-extrabold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Titanium
-                </button>
-                <button
-                  onClick={() => onThemeChange('cyberpunk')}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${
-                    currentTheme === 'cyberpunk'
-                      ? 'bg-white text-black shadow-sm font-extrabold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Neon Space
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  onNavigateTab('ml');
+                  setIsExpanded(false);
+                }}
+                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02]"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+                <span>ML Engine</span>
+              </button>
             </div>
           </div>
         )}

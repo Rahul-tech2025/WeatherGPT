@@ -8,6 +8,7 @@ interface InteractiveTiltCardProps {
   maxTilt?: number; // max tilt in degrees (default 5)
   glareOpacity?: number; // max glare opacity (default 0.28, balanced & refined)
   scaleOnHover?: number; // slight scale on hover (default 1.008)
+  borderRadius?: string; // custom border radius to eliminate clipping artifacts
 }
 
 export default function InteractiveTiltCard({
@@ -16,6 +17,7 @@ export default function InteractiveTiltCard({
   maxTilt = 5,
   glareOpacity = 0.28,
   scaleOnHover = 1.008,
+  borderRadius,
 }: InteractiveTiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [transformStyle, setTransformStyle] = useState<string>('');
@@ -45,7 +47,7 @@ export default function InteractiveTiltCard({
       const glareY = (y / rect.height) * 100;
 
       setTransformStyle(
-        `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scaleOnHover}, ${scaleOnHover}, 1)`
+        `perspective(1200px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scaleOnHover}, ${scaleOnHover}, 1)`
       );
       setGlareStyle({
         x: glareX,
@@ -62,7 +64,7 @@ export default function InteractiveTiltCard({
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setTransformStyle('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
+    setTransformStyle('perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
     setGlareStyle((prev) => ({ ...prev, opacity: 0 }));
   };
 
@@ -75,19 +77,24 @@ export default function InteractiveTiltCard({
       style={{
         transform: transformStyle,
         transition: isHovered
-          ? 'transform 0.16s cubic-bezier(0.25, 1, 0.5, 1)'
+          ? 'transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1)'
           : 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
         transformStyle: 'preserve-3d',
         willChange: 'transform',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        outline: '1px solid transparent', // Crucial hardware anti-aliasing fix: eliminates staircase edge artifacts on 3D rotation
+        borderRadius: borderRadius,
       }}
-      className={`relative overflow-hidden group ${className}`}
+      className={`relative overflow-hidden group select-none ${className}`}
     >
-      {/* Specular Starlight Glare Layer (Reduced by 25% for refined luxury glow) */}
+      {/* Specular Starlight Glare Layer with smooth rounded boundary */}
       <div
         className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300 rounded-[inherit]"
         style={{
           opacity: glareStyle.opacity,
-          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.20) 22%, rgba(255, 255, 255, 0.04) 45%, transparent 68%)`,
+          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.18) 22%, rgba(255, 255, 255, 0.03) 48%, transparent 70%)`,
+          borderRadius: 'inherit',
         }}
       />
       {children}

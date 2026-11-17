@@ -2,6 +2,14 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const {
+  securityHeaders,
+  injectionSanitizer,
+  standardLimiter,
+  aiChatLimiter,
+  authLimiter,
+} = require('./middleware/security.middleware');
+
 const weatherRoutes = require('./routes/weather.routes');
 const mlRoutes = require('./routes/ml.routes');
 const aiRoutes = require('./routes/ai.routes');
@@ -10,19 +18,50 @@ const alertRoutes = require('./routes/alert.routes');
 
 const app = express();
 
-// Middlewares
+// Disable Express fingerprint
+app.disable('x-powered-by');
+
+// Enterprise Security Headers
+app.use(securityHeaders);
+
+// CORS Whitelist Protection
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:3001',
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g. server-to-server or curl) or whitelisted origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not permitted by WeatherGPT CORS policy`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// Body Parser with strict payload size limits (prevents payload DOS attacks)
+app.use(express.json({ limit: '50kb' }));
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+
+// Anti-NoSQL & Parameter Injection Sanitization
+app.use(injectionSanitizer);
+
+// Global Sliding Window Rate Limiting
+app.use(standardLimiter);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'WeatherGPT Backend Service is running smoothly 🌤️',
+    service: 'WeatherGPT Meteorological Intelligence Gateway',
+    version: '2.4.0',
+    security: 'enforced',
     uptime: process.uptime(),
     timestamp: new Date().toISOString()
   });
@@ -34,11 +73,11 @@ app.use('/api/weather', weatherRoutes);
 // Machine Learning API Routes
 app.use('/api/ml', mlRoutes);
 
-// Gemini Conversational AI Routes
-app.use('/api/ai', aiRoutes);
+// Gemini Conversational AI Routes (Protected by AI rate limiter)
+app.use('/api/ai', aiChatLimiter, aiRoutes);
 
-// User Authentication & Favorites Routes
-app.use('/api/auth', authRoutes);
+// User Authentication & Favorites Routes (Protected by brute-force rate limiter)
+app.use('/api/auth', authLimiter, authRoutes);
 
 // Weather Alert Thresholds Routes
 app.use('/api/alerts', alertRoutes);
@@ -51,12 +90,18 @@ app.use((req, res) => {
   });
 });
 
-// Global Error Handler
+// Centralized Secure Error Handler
 app.use((err, req, res, next) => {
-  console.error('Unhandled Error:', err);
-  res.status(err.status || 500).json({
+  // Prevent stack leak in production responses
+  const statusCode = err.status || 500;
+  const isDev = process.env.NODE_ENV === 'development';
+
+  console.error('[WeatherGPT Security Gateway Error]:', err.message);
+
+  res.status(statusCode).json({
     status: 'error',
-    message: err.message || 'Internal Server Error'
+    message: isDev ? err.message : (statusCode === 500 ? 'Internal Server Processing Error' : err.message),
+    timestamp: new Date().toISOString(),
   });
 });
 

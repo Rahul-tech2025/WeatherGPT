@@ -39,7 +39,7 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
   const range = globalMax - globalMin || 1;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.28} scaleOnHover={1.006}>
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.28} scaleOnHover={1.006} className="rounded-[2rem]">
       <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden bg-[#080c14]/85 border border-white/[0.10]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center space-x-2.5">

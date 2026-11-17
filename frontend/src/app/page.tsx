@@ -15,7 +15,6 @@ import HistoricalAnalyticsView from '../components/HistoricalAnalyticsView';
 import WeatherMapView from '../components/WeatherMapView';
 import OrbActionsDock from '../components/OrbActionsDock';
 import DynamicIslandCapsule from '../components/DynamicIslandCapsule';
-import AudioBriefingPlayer from '../components/AudioBriefingPlayer';
 import TimeMachineScrubber from '../components/TimeMachineScrubber';
 import { getForecast, getMLPrediction, getMLMetrics } from '../services/api';
 import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary, HourlyForecastItem } from '../types/weather';
@@ -43,60 +42,15 @@ export default function Home() {
   const [isMlLoading, setIsMlLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Elite Design Engine States
-  const [currentTheme, setCurrentTheme] = useState<'obsidian' | 'titanium' | 'cyberpunk'>('obsidian');
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  // Active Time Scrubber States
   const [scrubbedHour, setScrubbedHour] = useState<HourlyForecastItem | null>(null);
   const [scrubbedIndex, setScrubbedIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    document.body.classList.remove('theme-obsidian', 'theme-titanium', 'theme-cyberpunk');
-    document.body.classList.add(`theme-${currentTheme}`);
-  }, [currentTheme]);
 
   // Reset scrubbed timeline on city switch
   useEffect(() => {
     setScrubbedHour(null);
     setScrubbedIndex(null);
   }, [city]);
-
-  // Jarvis AI Voice Audio Briefing
-  const handleToggleAudioBriefing = () => {
-    if (isPlayingAudio) {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-      setIsPlayingAudio(false);
-      return;
-    }
-
-    if (!forecast) return;
-
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const temp = unit === 'C' ? Math.round(forecast.current.temperature) : Math.round((forecast.current.temperature * 9) / 5 + 32);
-      const unitWord = unit === 'C' ? 'degrees Celsius' : 'degrees Fahrenheit';
-      const rainProb = mlPrediction?.rainfall_prediction?.rain_probability_pct ?? 12;
-      const rainStatus = mlPrediction?.rainfall_prediction?.will_rain ? 'Precipitation is likely.' : 'Dry meteorological conditions are expected.';
-      const nextTemp = mlPrediction?.temperature_prediction ? `${mlPrediction.temperature_prediction.predicted_temp_celsius} degrees Celsius` : 'steady temperatures';
-
-      const speechScript = `Greetings from WeatherGPT. In ${city.name}, current observation reports ${temp} ${unitWord} with ${forecast.current.condition}. Relative humidity is at ${forecast.current.humidity} percent, and winds are blowing at ${forecast.current.windSpeed} kilometers per hour. According to our scikit-learn machine learning engine, tomorrow's mean temperature is predicted at ${nextTemp} with a ${rainProb} percent chance of rain. ${rainStatus} Have a wonderful and productive day!`;
-
-      const utterance = new SpeechSynthesisUtterance(speechScript);
-      utterance.rate = 0.98;
-      utterance.pitch = 1.0;
-
-      utterance.onend = () => {
-        setIsPlayingAudio(false);
-      };
-      utterance.onerror = () => {
-        setIsPlayingAudio(false);
-      };
-
-      setIsPlayingAudio(true);
-      window.speechSynthesis.speak(utterance);
-    }
-  };
 
   const fetchWeatherData = async (lat: number, lon: number, cityName: string) => {
     setIsLoading(true);
@@ -136,16 +90,6 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-white selection:text-black">
       
-      {/* Jarvis Voice Audio Floating Equalizer Player */}
-      <AudioBriefingPlayer
-        city={city}
-        forecast={forecast}
-        mlPrediction={mlPrediction}
-        unit={unit}
-        isPlaying={isPlayingAudio}
-        onTogglePlay={handleToggleAudioBriefing}
-      />
-
       {/* Background Ambient Cosmic Nebula Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[750px] h-[550px] bg-gradient-to-tr from-blue-700/20 via-indigo-600/12 to-transparent blur-[160px] pointer-events-none rounded-full -z-10" />
       <div className="fixed top-80 right-1/4 w-[650px] h-[500px] bg-gradient-to-bl from-purple-700/16 via-cyan-600/12 to-transparent blur-[160px] pointer-events-none rounded-full -z-10" />
@@ -173,11 +117,7 @@ export default function Home() {
                 forecast={forecast}
                 mlPrediction={mlPrediction}
                 unit={unit}
-                currentTheme={currentTheme}
-                onThemeChange={setCurrentTheme}
                 onNavigateTab={setActiveTab}
-                onPlayAudioBriefing={handleToggleAudioBriefing}
-                isPlayingAudio={isPlayingAudio}
               />
             </div>
 
@@ -362,19 +302,30 @@ export default function Home() {
 
       </main>
 
-      {/* 3. High-End Academic Footer */}
-      <footer className="border-t border-white/[0.08] bg-slate-950/80 backdrop-blur-2xl py-6 text-center text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center space-x-2">
+      {/* 3. Aerospace Grade Academic & Copyright Protected Footer */}
+      <footer className="border-t border-white/[0.08] bg-[#02040a]/90 backdrop-blur-2xl py-6 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-slate-400">
             <span className="font-extrabold text-white tracking-tight">WeatherGPT</span>
             <span>•</span>
-            <span className="text-slate-400">Lovely Professional University (LPU)</span>
-            <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-cyan-300 text-[10px] font-bold border border-cyan-500/20">
+            <span>Lovely Professional University</span>
+            <span className="px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-200 text-[10px] font-mono font-bold border border-white/10">
               B.Tech AI &amp; ML
             </span>
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              Secure Gateway
+            </span>
           </div>
-          <div className="text-slate-400 font-medium">
-            Project Lead: <strong className="text-slate-100 font-bold">Rahul Choudhary (12504340)</strong> | Team: Gurbani, Karamjit, Tisha
+
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-center md:text-right">
+            <span className="text-slate-500">
+              &copy; 2026 WeatherGPT. All rights reserved.
+            </span>
+            <span className="hidden sm:inline text-slate-700">|</span>
+            <span className="text-slate-300 font-medium">
+              Lead: <strong className="text-white font-bold">Rahul Choudhary (12504340)</strong> • Gurbani, Karamjit, Tisha
+            </span>
           </div>
         </div>
       </footer>

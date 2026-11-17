@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { sendAIChatMessage } from '../services/api';
 import { CitySearchResult } from '../types/weather';
-import FluidAIWaveform from './FluidAIWaveform';
 
 interface AIChatViewProps {
   currentCity: CitySearchResult;
@@ -187,27 +186,26 @@ export default function AIChatView({ currentCity }: AIChatViewProps) {
           );
         })}
 
-        {/* Loading Reasoning Pulse with Liquid Waveform */}
+        {/* Loading Reasoning Pulse */}
         {isLoading && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/15 flex items-center justify-center text-white text-sm shadow-md">
-                <svg className="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="12" y1="2" x2="12" y2="6" />
-                  <line x1="12" y1="18" x2="12" y2="22" />
-                  <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                  <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                  <line x1="2" y1="12" x2="6" y2="12" />
-                  <line x1="18" y1="12" x2="22" y2="12" />
-                </svg>
-              </div>
-              <div className="flex items-center space-x-2 px-4 py-3 bg-[#0d121d] border border-white/[0.08] rounded-2xl rounded-tl-sm text-xs text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                <span className="font-medium">Synthesizing telemetry with Gemini...</span>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/15 flex items-center justify-center text-white text-sm shadow-md">
+              <svg className="w-4 h-4 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+                <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+              </svg>
             </div>
-            <div className="w-full max-w-sm pl-11">
-              <FluidAIWaveform isActive={true} className="h-10" />
+            <div className="flex items-center space-x-2.5 px-4 py-3 bg-[#0d121d] border border-white/[0.08] rounded-2xl rounded-tl-sm text-xs text-slate-300">
+              <span className="flex space-x-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
+              <span className="font-medium pl-1">Synthesizing telemetry with Gemini...</span>
             </div>
           </div>
         )}

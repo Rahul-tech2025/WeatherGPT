@@ -38,30 +38,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
-    transition: background-color 0.5s ease, color 0.5s ease;
-  }
-
-  body.theme-obsidian {
-    --background: #030508;
-    --foreground: #f8fafc;
-  }
-
-  body.theme-titanium {
-    --background: #080c14;
-    --foreground: #f1f5f9;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(200, 215, 235, 0.08) 0%, transparent 55%),
-      radial-gradient(circle at 100% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
-      radial-gradient(circle at 0% 50%, rgba(200, 215, 235, 0.03) 0%, transparent 40%);
-  }
-
-  body.theme-cyberpunk {
-    --background: #050508;
-    --foreground: #ffffff;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 100% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 0% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
   }
 }
 

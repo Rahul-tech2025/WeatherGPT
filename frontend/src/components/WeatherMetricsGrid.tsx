@@ -47,7 +47,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
       
       {/* 1. Surface Wind with Visual Rotating Compass */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
@@ -104,7 +104,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
       </InteractiveTiltCard>
 
       {/* 2. Solar UV Index with Arc Meter */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
@@ -150,7 +150,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
       </InteractiveTiltCard>
 
       {/* 3. Daylight & Sun Arc Progression */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
@@ -198,7 +198,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
       </InteractiveTiltCard>
 
       {/* 4. Relative Humidity & Dew Point */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
@@ -232,7 +232,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
       </InteractiveTiltCard>
 
       {/* 5. Barometric Pressure */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
             <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
@@ -265,7 +265,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
       </InteractiveTiltCard>
 
       {/* 6. Dual AI Architecture Showcase */}
-      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28}>
+      <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
         <div className="rounded-[2rem] p-6 bg-white/[0.03] border border-white/[0.12] backdrop-blur-3xl shadow-xl relative overflow-hidden group h-full flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-slate-300 text-xs font-bold uppercase tracking-wider mb-3">
