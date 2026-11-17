@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WeatherGPT - Final Project Report & Synopsis</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.5;
+      color: #111;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px;
+      font-size: 12pt;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Arial', sans-serif;
+      color: #0f172a;
+      page-break-after: avoid;
+    }
+    h1 {
+      font-size: 20pt;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    .header-block {
+      text-align: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+    .meta-table {
+      width: 100%;
+      margin: 20px 0;
+      border-collapse: collapse;
+    }
+    .meta-table td {
+      padding: 6px;
+      vertical-align: top;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 10.5pt;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid #475569;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    table.data-table th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: bold;
+    }
+    .highlight {
+      background-color: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 10px 15px;
+      margin: 15px 0;
+      font-style: italic;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 9pt;
+      font-weight: bold;
+      border-radius: 4px;
+      background: #e2e8f0;
+    }
+    .badge-win {
+      background: #dcfce7;
+      color: #166534;
+    }
+    pre {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 9pt;
+      overflow-x: auto;
+    }
+    @media print {
+      body { padding: 0; }
+      .page-break { page-break-before: always; }
+      button.print-btn { display: none; }
+    }
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <button class="print-btn" onclick="window.print()">🖨️ Print to PDF (Ctrl + P)</button>
+
+  <div class="header-block">
+    <div style="font-size: 14pt; font-weight: bold; text-transform: uppercase;">Lovely Professional University (LPU), Punjab</div>
+    <div style="font-size: 11pt; color: #475569;">Department of Computer Science & Engineering</div>
+    <br>
+    <div style="font-size: 12pt; font-weight: bold; color: #dc2626;">PROJECT REPORT / REVISED SYNOPSIS</div>
+    <h1>“WeatherGPT”</h1>
+    <div style="font-size: 13pt; font-style: italic; color: #334155;">
+      “Conversational AI for Weather Forecasting, Alerts, and Climate Information”
+    </div>
+    <div style="font-size: 11pt; margin-top: 10px;">
+      Submitted in partial fulfillment of the requirements for the degree of:<br>
+      <strong>B.Tech (Computer Science & Engineering – Artificial Intelligence & Machine Learning)</strong>
+    </div>
+  </div>
+
+  <table class="meta-table">
+    <tr>
+      <td style="width: 50%;">
+        <strong>Submitted By:</strong><br>
+        1. <strong>Rahul Choudhary</strong> (Reg. No. 12504340) – Project Lead<br>
+        2. <strong>Gurbani Kaur</strong> (Reg. No. 12505953)<br>
+        3. <strong>Karamjit Singh</strong> (Reg. No. 12513056)<br>
+        4. <strong>Tisha Makhija</strong> (Reg. No. 12509332)
+      </td>
+      <td style="width: 50%; text-align: right;">
+        <strong>Under the Guidance of:</strong><br>
+        <strong>Mr. Alan Alexander</strong> (UID: 35108)<br>
+        Assistant Professor<br>
+        Department of Computer Science & Engineering<br>
+        Lovely Professional University, Punjab
+      </td>
+    </tr>
+  </table>
+
+  <hr>
+
+  <h2>1. Title of the Project</h2>
+  <p><strong>WeatherGPT: Conversational AI for Weather Forecasting, Alerts, and Climate Information</strong></p>
+
+  <h2>2. Abstract</h2>
+  <p>
+    Weather information heavily impacts everyday planning, agriculture, and outdoor activities. Conventional weather apps display dense, numerical dashboards that users find difficult to interpret, while general-purpose AI chatbots can explain topics conversationally but hallucinate weather values because they are not connected to real-time telemetry.
+  </p>
+  <p>
+    <strong>WeatherGPT</strong> bridges this gap through a decoupled 3-tier microservice architecture uniting <strong>two distinct AI paradigms</strong>:
+  </p>
+  <ul>
+    <li><strong>Generative AI (Google Gemini):</strong> Utilized strictly for natural language query comprehension, entity extraction, and conversational explanation—grounded explicitly in live weather data to prevent hallucinations.</li>
+    <li><strong>Custom Machine Learning (Scikit-Learn Microservice):</strong> Independently trained on 6 years of daily historical climate observations for Jalandhar, Punjab (2019–2024; 2,184 samples). A chronological train-test split (2019–2023 for training, 2024 for testing) was implemented to prevent temporal data leakage.</li>
+  </ul>
+  <p>
+    Our <strong>Temperature Regressor (Linear Regression)</strong> achieved an <strong>R² Score of 0.9750</strong> (MAE = 1.048°C, RMSE = 1.309°C) on unseen 2024 test data. Our <strong>Rainfall Classifier (Logistic Regression with balanced class weights)</strong> successfully tackled seasonal class imbalance to achieve <strong>83.56% Accuracy</strong>, <strong>0.7115 F1-Score</strong>, and an <strong>ROC-AUC of 0.8362</strong>. The platform is deployed with a Next.js 14 frontend, Express.js API gateway, and Python FastAPI microservice.
+  </p>
+
+  <div class="page-break"></div>
+
+  <h2>3. Problem Statement</h2>
+  <ul>
+    <li><strong>Data is difficult to interpret:</strong> Traditional dashboards show raw atmospheric values (pressure in hPa, dew point) without actionable context.</li>
+    <li><strong>AI Chatbot Hallucinations:</strong> General LLMs lack live weather API connectivity and fabricate weather values.</li>
+    <li><strong>Lack of Custom Machine Learning in Consumer Apps:</strong> Commercial applications rely on proprietary black boxes without providing transparent model evaluation metrics, confidence intervals, or regional calibration.</li>
+  </ul>
+
+  <h2>4. System Architecture</h2>
+  <pre>
+                  ┌──────────────────────────────────────────────┐
+                  │      Next.js 14 Frontend UI (Port 3000)       │
+                  │   TypeScript, Tailwind CSS, Leaflet Radar    │
+                  └──────────────────────┬───────────────────────┘
+                                         │ HTTP REST / JSON
+                                         ▼
+                  ┌──────────────────────────────────────────────┐
+                  │    Express.js Backend Gateway (Port 5000)    │
+                  │  Open-Meteo REST Client, Gemini AI Grounding,│
+                  │        JWT Auth & MongoDB Alert Engine       │
+                  └──────────────┬───────────────────────────────┘
+                                 │
+           ┌─────────────────────┴───────────────────────┐
+           ▼                                             ▼
+┌─────────────────────────────────┐   ┌───────────────────────────────────┐
+│ Python FastAPI ML Service (8000)│   │       External Cloud APIs         │
+│ - Linear Regression Model       │   │ - Open-Meteo Global Weather API   │
+│ - Logistic Regression Model     │   │ - Google Gemini 1.5/2.0 API       │
+│ - Real Metrics & Predict APIs   │   │ - RainViewer Live Radar Tiles     │
+└─────────────────────────────────┘   └───────────────────────────────────┘
+  </pre>
+
+  <h2>5. Dataset & Feature Engineering Pipeline</h2>
+  <p>
+    Historical atmospheric data was collected for <strong>Jalandhar, Punjab (Lat: 31.3256° N, Lon: 75.5792° E)</strong> from <strong>January 1, 2019 to December 31, 2024</strong> (2,184 daily records).
+  </p>
+  <ul>
+    <li><strong>Chronological Split (Zero Data Leakage):</strong> 2019–2023 was used for Training (1,819 samples), and the full calendar year 2024 was reserved for testing (365 unseen days).</li>
+    <li><strong>Engineered Features:</strong> 3-day autoregressive temperature lags (t-1, t-2, t-3), 7-day rolling mean temperatures, humidity/pressure lags, and sine/cosine cyclical day-of-year and month encodings.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <h2>6. Machine Learning Evaluation & Results (Official Validation)</h2>
+
+  <h3>6.1 Model A: Temperature Prediction (Regression)</h3>
+  <p><strong>Target:</strong> Predict next-day mean temperature (°C).</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>MAE (°C)</th>
+        <th>RMSE (°C)</th>
+        <th>R² Score</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Linear Regression (Ridge/OLS)</strong></td>
+        <td><strong>1.0480</strong></td>
+        <td><strong>1.3090</strong></td>
+        <td><strong>0.9750</strong></td>
+        <td><span class="badge badge-win">Selected (Winning Model)</span></td>
+      </tr>
+      <tr>
+        <td>Random Forest Regressor</td>
+        <td>1.3100</td>
+        <td>1.6690</td>
+        <td>0.9593</td>
+        <td><span class="badge">Baseline Comparison</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="highlight">
+    <strong>Scientific Insight:</strong> Linear Regression achieved an outstanding <strong>R² of 0.9750</strong>, proving that <strong>97.5% of regional temperature variance</strong> is successfully explained by autoregressive momentum and cyclical seasonality, with an average error of merely <strong>1.04°C</strong>.
+  </div>
+
+  <h3>6.2 Model B: Rainfall Prediction (Binary Classification)</h3>
+  <p><strong>Target:</strong> Predict next-day rainfall occurrence (Rain ≥ 0.1 mm vs. No Rain).</p>
+  <p><strong>Class Imbalance Treatment:</strong> Northern India exhibits extreme seasonal dry spells. In our test year 2024, there were 259 dry days vs. 106 rain days (~71% vs 29%). We integrated <code>class_weight='balanced'</code> to prevent majority-class bias.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>Accuracy</th>
+        <th>Precision</th>
+        <th>Recall</th>
+        <th>F1-Score</th>
+        <th>ROC-AUC</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Logistic Regression (Balanced)</strong></td>
+        <td><strong>83.56%</strong></td>
+        <td><strong>72.55%</strong></td>
+        <td><strong>69.81%</strong></td>
+        <td><strong>0.7115</strong></td>
+        <td><strong>0.8362</strong></td>
+        <td><span class="badge badge-win">Selected</span></td>
+      </tr>
+      <tr>
+        <td>Random Forest Classifier</td>
+        <td>80.82%</td>
+        <td>68.00%</td>
+        <td>64.15%</td>
+        <td>0.6602</td>
+        <td>0.7937</td>
+        <td><span class="badge">Baseline</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Confusion Matrix (Logistic Regression – 365 Unseen Days in 2024)</h4>
+  <table class="data-table" style="text-align: center;">
+    <thead>
+      <tr>
+        <th>Actual \ Predicted</th>
+        <th>Predicted: No Rain (0)</th>
+        <th>Predicted: Rain (1)</th>
+        <th>Total Actual</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Actual: No Rain (0)</strong></td>
+        <td style="background-color: #dcfce7; font-weight: bold;">231 (True Negatives)</td>
+        <td style="background-color: #fee2e2;">28 (False Positives)</td>
+        <td>259 Days</td>
+      </tr>
+      <tr>
+        <td><strong>Actual: Rain (1)</strong></td>
+        <td style="background-color: #fee2e2;">32 (False Negatives)</td>
+        <td style="background-color: #dcfce7; font-weight: bold;">74 (True Positives)</td>
+        <td>106 Days</td>
+      </tr>
+      <tr>
+        <td><strong>Total Predicted</strong></td>
+        <td><strong>263 Days</strong></td>
+        <td><strong>102 Days</strong></td>
+        <td><strong>365 Days</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>Specificity (True Negative Rate):</strong> 231 / 259 = <strong>89.19%</strong> (Extremely low false rain alarm rate).</li>
+    <li><strong>Sensitivity (Recall):</strong> 74 / 106 = <strong>69.81%</strong> (Captures ~70% of precipitation events on unseen data).</li>
+    <li><strong>ROC-AUC Score:</strong> <strong>0.8362</strong>, indicating strong discriminative capability across all thresholds.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <h2>7. Complete Implemented Modules</h2>
+  <ol>
+    <li><strong>Live Weather Dashboard:</strong> Real-time conditions, 24-hr hourly carousel, 7-day outlook, and Next-Day ML predictions.</li>
+    <li><strong>ML Model Insights View:</strong> Displays live model evaluations, confusion matrix, and prediction probabilities.</li>
+    <li><strong>Grounded Gemini AI Assistant:</strong> Answers user queries conversationally using live Open-Meteo context injection.</li>
+    <li><strong>Multi-City Comparison:</strong> Side-by-side comparison of up to 3 cities simultaneously.</li>
+    <li><strong>Historical Climate Analytics:</strong> Interactive 7, 14, and 30-day time-series charts.</li>
+    <li><strong>Interactive Satellite Radar Map:</strong> OpenStreetMap + Leaflet with real-time RainViewer precipitation satellite radar overlays.</li>
+  </ol>
+
+  <h2>8. Conclusion</h2>
+  <p>
+    WeatherGPT demonstrates that coupling grounded Generative AI with customized Scikit-Learn models provides an accurate, explainable, and accessible weather intelligence tool. By collecting localized historical climate data, avoiding temporal data leakage, and resolving class imbalance, the project satisfies rigorous academic and engineering criteria for B.Tech (AI & ML).
+  </p>
+
+</body>
+</html>
