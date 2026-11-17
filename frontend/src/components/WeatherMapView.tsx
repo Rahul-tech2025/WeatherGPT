@@ -124,12 +124,12 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
       const L = (window as any).L;
 
       if (!mapInstanceRef.current) {
-        // Initialize Map
+        // Initialize Map (Initial zoom 7 for optimal radar sharpness)
         const map = L.map(mapContainerRef.current, {
           zoomControl: false,
-          minZoom: 3,
+          minZoom: 2,
           maxZoom: 18
-        }).setView([city.latitude, city.longitude], 8);
+        }).setView([city.latitude, city.longitude], 7);
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
@@ -185,8 +185,12 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
               const latestPast = radarData.radar.past[radarData.radar.past.length - 1];
               const radarTileUrl = `https://tilecache.rainviewer.com${latestPast.path}/256/{z}/{x}/{y}/2/1_1.png`;
               const radar = L.tileLayer(radarTileUrl, {
+                tileSize: 256,
                 opacity: 0.65,
-                zIndex: 100
+                zIndex: 100,
+                minZoom: 1,
+                maxZoom: 18,
+                maxNativeZoom: 7 // Critical: Upscales level-7 radar tiles to prevent RainViewer's "zoom level not supported" error
               });
               radar.addTo(map);
               radarLayerRef.current = radar;
@@ -203,7 +207,7 @@ export default function WeatherMapView({ city, unit, onSelectCity }: WeatherMapV
         setTimeout(() => map.invalidateSize(), 600);
       } else {
         // Update view when city prop changes
-        mapInstanceRef.current.setView([city.latitude, city.longitude], 8);
+        mapInstanceRef.current.setView([city.latitude, city.longitude], 7);
         if (markerRef.current) {
           markerRef.current.setLatLng([city.latitude, city.longitude]);
         }
