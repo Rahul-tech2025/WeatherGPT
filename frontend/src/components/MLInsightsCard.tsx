@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { MLPredictionData, MLMetricsSummary } from '../types/weather';
+import InteractiveTiltCard from './InteractiveTiltCard';
 
 interface MLInsightsCardProps {
   prediction: MLPredictionData | null;
@@ -46,7 +47,8 @@ export default function MLInsightsCard({
   const rainPred = prediction?.rainfall_prediction;
 
   return (
-    <div className="glass-card rounded-[2.5rem] p-7 md:p-9 relative overflow-hidden group">
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.14} scaleOnHover={1.006}>
+      <div className="glass-card rounded-[2.5rem] p-7 md:p-9 relative overflow-hidden group">
       {/* Decorative ambient atmospheric glow */}
       <div className="absolute -top-32 -right-32 w-80 h-80 bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none"></div>
@@ -313,6 +315,7 @@ export default function MLInsightsCard({
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </InteractiveTiltCard>
   );
 }

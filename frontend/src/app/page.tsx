@@ -14,8 +14,12 @@ import CityComparisonView from '../components/CityComparisonView';
 import HistoricalAnalyticsView from '../components/HistoricalAnalyticsView';
 import WeatherMapView from '../components/WeatherMapView';
 import OrbActionsDock from '../components/OrbActionsDock';
+import AtmosphericParticleCanvas from '../components/AtmosphericParticleCanvas';
+import DynamicIslandCapsule from '../components/DynamicIslandCapsule';
+import AudioBriefingPlayer from '../components/AudioBriefingPlayer';
+import TimeMachineScrubber from '../components/TimeMachineScrubber';
 import { getForecast, getMLPrediction, getMLMetrics } from '../services/api';
-import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary } from '../types/weather';
+import { CitySearchResult, ForecastData, MLPredictionData, MLMetricsSummary, HourlyForecastItem } from '../types/weather';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -39,6 +43,61 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMlLoading, setIsMlLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Elite Design Engine States
+  const [currentTheme, setCurrentTheme] = useState<'obsidian' | 'titanium' | 'cyberpunk'>('obsidian');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [scrubbedHour, setScrubbedHour] = useState<HourlyForecastItem | null>(null);
+  const [scrubbedIndex, setScrubbedIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    document.body.classList.remove('theme-obsidian', 'theme-titanium', 'theme-cyberpunk');
+    document.body.classList.add(`theme-${currentTheme}`);
+  }, [currentTheme]);
+
+  // Reset scrubbed timeline on city switch
+  useEffect(() => {
+    setScrubbedHour(null);
+    setScrubbedIndex(null);
+  }, [city]);
+
+  // Jarvis AI Voice Audio Briefing
+  const handleToggleAudioBriefing = () => {
+    if (isPlayingAudio) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    if (!forecast) return;
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const temp = unit === 'C' ? Math.round(forecast.current.temperature) : Math.round((forecast.current.temperature * 9) / 5 + 32);
+      const unitWord = unit === 'C' ? 'degrees Celsius' : 'degrees Fahrenheit';
+      const rainProb = mlPrediction?.rainfall_prediction?.rain_probability_pct ?? 12;
+      const rainStatus = mlPrediction?.rainfall_prediction?.will_rain ? 'Precipitation is likely.' : 'Dry meteorological conditions are expected.';
+      const nextTemp = mlPrediction?.temperature_prediction ? `${mlPrediction.temperature_prediction.predicted_temp_celsius} degrees Celsius` : 'steady temperatures';
+
+      const speechScript = `Greetings from WeatherGPT. In ${city.name}, current observation reports ${temp} ${unitWord} with ${forecast.current.condition}. Relative humidity is at ${forecast.current.humidity} percent, and winds are blowing at ${forecast.current.windSpeed} kilometers per hour. According to our scikit-learn machine learning engine, tomorrow's mean temperature is predicted at ${nextTemp} with a ${rainProb} percent chance of rain. ${rainStatus} Have a wonderful and productive day!`;
+
+      const utterance = new SpeechSynthesisUtterance(speechScript);
+      utterance.rate = 0.98;
+      utterance.pitch = 1.0;
+
+      utterance.onend = () => {
+        setIsPlayingAudio(false);
+      };
+      utterance.onerror = () => {
+        setIsPlayingAudio(false);
+      };
+
+      setIsPlayingAudio(true);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const fetchWeatherData = async (lat: number, lon: number, cityName: string) => {
     setIsLoading(true);
@@ -78,6 +137,36 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950">
       
+      {/* Living Atmospheric Particle Canvas */}
+      <AtmosphericParticleCanvas
+        condition={forecast?.current.condition}
+        isDay={forecast?.current.isDay}
+        rainIntensity={forecast?.current.precipitation}
+      />
+
+      {/* Dynamic Floating Telemetry Island (Apple VisionOS / Sequoia Capsule) */}
+      <DynamicIslandCapsule
+        city={city}
+        forecast={forecast}
+        mlPrediction={mlPrediction}
+        unit={unit}
+        currentTheme={currentTheme}
+        onThemeChange={setCurrentTheme}
+        onNavigateTab={setActiveTab}
+        onPlayAudioBriefing={handleToggleAudioBriefing}
+        isPlayingAudio={isPlayingAudio}
+      />
+
+      {/* Jarvis Voice Audio Floating Equalizer Player */}
+      <AudioBriefingPlayer
+        city={city}
+        forecast={forecast}
+        mlPrediction={mlPrediction}
+        unit={unit}
+        isPlaying={isPlayingAudio}
+        onTogglePlay={handleToggleAudioBriefing}
+      />
+
       {/* Background Ambient Aurora Glow Orbs */}
       <div className="fixed top-0 left-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-blue-600/15 via-indigo-600/10 to-transparent blur-[120px] pointer-events-none rounded-full -z-10" />
       <div className="fixed top-72 right-1/4 w-[550px] h-[400px] bg-gradient-to-bl from-cyan-500/12 via-purple-600/10 to-transparent blur-[120px] pointer-events-none rounded-full -z-10" />
@@ -141,6 +230,7 @@ export default function Home() {
                   current={forecast.current}
                   todayDaily={forecast.daily[0]}
                   unit={unit}
+                  overrideHourlyItem={scrubbedHour}
                 />
 
                 {/* Futuristic Glowing Orb Action Dock */}
@@ -152,6 +242,17 @@ export default function Home() {
                     onNavigateTab={(tab) => setActiveTab(tab)}
                   />
                 </div>
+
+                {/* 24-Hour Interactive Atmospheric Time Scrubber */}
+                <TimeMachineScrubber
+                  hourly={forecast.hourly}
+                  unit={unit}
+                  onSelectHour={(item, idx) => {
+                    setScrubbedHour(item);
+                    setScrubbedIndex(idx);
+                  }}
+                  selectedHourIndex={scrubbedIndex}
+                />
 
                 {/* 24-Hour Hourly Strip */}
                 <HourlyForecast hourly={forecast.hourly} unit={unit} />

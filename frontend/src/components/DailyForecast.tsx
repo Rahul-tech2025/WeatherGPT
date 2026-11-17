@@ -4,6 +4,7 @@
 import React from 'react';
 import { DailyForecastItem } from '../types/weather';
 import { WeatherIcon } from './WeatherIcon';
+import InteractiveTiltCard from './InteractiveTiltCard';
 
 interface DailyForecastProps {
   daily: DailyForecastItem[];
@@ -38,7 +39,8 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
   const range = globalMax - globalMin || 1;
 
   return (
-    <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden">
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.12} scaleOnHover={1.006}>
+      <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">
@@ -125,5 +127,6 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
         })}
       </div>
     </div>
+    </InteractiveTiltCard>
   );
 };

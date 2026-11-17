@@ -4,6 +4,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { sendAIChatMessage } from '../services/api';
 import { CitySearchResult } from '../types/weather';
+import FluidAIWaveform from './FluidAIWaveform';
 
 interface AIChatViewProps {
   currentCity: CitySearchResult;
@@ -168,15 +169,20 @@ export default function AIChatView({ currentCity }: AIChatViewProps) {
           );
         })}
 
-        {/* Loading Reasoning Pulse */}
+        {/* Loading Reasoning Pulse with Liquid Siri Waveform */}
         {isLoading && (
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-cyan-400 text-sm">
-              ✨
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-cyan-400 text-sm shadow-md">
+                ✨
+              </div>
+              <div className="flex items-center space-x-2 px-4 py-3 bg-slate-900/80 border border-white/[0.08] rounded-2xl rounded-tl-sm text-xs text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                <span className="font-medium">Synthesizing meteorological telemetry with Gemini...</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 px-4 py-3 bg-slate-900/80 border border-white/[0.08] rounded-2xl rounded-tl-sm text-xs text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              <span className="font-medium">Reasoning over atmospheric telemetry...</span>
+            <div className="w-full max-w-sm pl-11">
+              <FluidAIWaveform isActive={true} className="h-10" />
             </div>
           </div>
         )}
