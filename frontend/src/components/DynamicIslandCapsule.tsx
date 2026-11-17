@@ -36,13 +36,13 @@ export default function DynamicIslandCapsule({
     : (forecast.current.temperature * 9) / 5 + 32;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+    <div className="relative z-30 pointer-events-auto flex justify-center w-full my-1">
       <div
         onClick={() => setIsExpanded(!isExpanded)}
         className={`relative cursor-pointer select-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isExpanded
-            ? 'w-[92vw] sm:w-[460px] p-5 rounded-[2.2rem] bg-[#070b12]/95 border border-white/20 shadow-2xl shadow-black/80 backdrop-blur-3xl'
-            : 'w-auto px-4 py-2 rounded-full bg-[#080c14]/90 hover:bg-[#0c121e] border border-white/15 hover:border-white/30 shadow-xl shadow-black/60 backdrop-blur-2xl'
+            ? 'w-[92vw] sm:w-[480px] p-5 rounded-[2.2rem] bg-[#070b12]/95 border border-white/25 shadow-2xl shadow-black/90 backdrop-blur-3xl'
+            : 'w-auto px-5 py-2.5 rounded-full bg-[#080c14]/90 hover:bg-[#0c121e] border border-white/15 hover:border-white/35 shadow-xl shadow-black/70 backdrop-blur-2xl'
         }`}
       >
         {/* COMPACT STATE */}

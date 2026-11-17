@@ -32,7 +32,7 @@ export const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourly, unit }) 
   if (!hourly || hourly.length === 0) return null;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.38} scaleOnHover={1.006}>
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.28} scaleOnHover={1.006}>
       <div className="w-full glass-card rounded-[2rem] p-6 sm:p-7 relative overflow-hidden bg-[#080c14]/85 border border-white/[0.10]">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center space-x-2.5">

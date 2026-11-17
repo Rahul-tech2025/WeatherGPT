@@ -60,7 +60,7 @@ export const CurrentWeatherCard: React.FC<CurrentWeatherCardProps> = ({
   };
 
   return (
-    <InteractiveTiltCard maxTilt={5} glareOpacity={0.42} scaleOnHover={1.008}>
+    <InteractiveTiltCard maxTilt={5} glareOpacity={0.30} scaleOnHover={1.008}>
       <div className="w-full rounded-[2.5rem] p-7 sm:p-10 backdrop-blur-3xl bg-[#080c14]/90 border border-white/[0.12] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] relative overflow-hidden transition-all duration-500">
         
         {/* Space Monochromatic Ambient Orbs */}

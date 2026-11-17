@@ -5,17 +5,17 @@ import React, { useRef, useState, useCallback, ReactNode } from 'react';
 interface InteractiveTiltCardProps {
   children: ReactNode;
   className?: string;
-  maxTilt?: number; // max tilt in degrees (default 6)
-  glareOpacity?: number; // max glare opacity (default 0.38)
-  scaleOnHover?: number; // slight scale on hover (default 1.01)
+  maxTilt?: number; // max tilt in degrees (default 5)
+  glareOpacity?: number; // max glare opacity (default 0.28, balanced & refined)
+  scaleOnHover?: number; // slight scale on hover (default 1.008)
 }
 
 export default function InteractiveTiltCard({
   children,
   className = '',
-  maxTilt = 6,
-  glareOpacity = 0.38,
-  scaleOnHover = 1.01,
+  maxTilt = 5,
+  glareOpacity = 0.28,
+  scaleOnHover = 1.008,
 }: InteractiveTiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [transformStyle, setTransformStyle] = useState<string>('');
@@ -82,12 +82,12 @@ export default function InteractiveTiltCard({
       }}
       className={`relative overflow-hidden group ${className}`}
     >
-      {/* High-Luminance Specular Starlight Glare Layer */}
+      {/* Specular Starlight Glare Layer (Reduced by 25% for refined luxury glow) */}
       <div
         className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300 rounded-[inherit]"
         style={{
           opacity: glareStyle.opacity,
-          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.28) 22%, rgba(255, 255, 255, 0.06) 45%, transparent 68%)`,
+          background: `radial-gradient(circle at ${glareStyle.x}% ${glareStyle.y}%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.20) 22%, rgba(255, 255, 255, 0.04) 45%, transparent 68%)`,
         }}
       />
       {children}

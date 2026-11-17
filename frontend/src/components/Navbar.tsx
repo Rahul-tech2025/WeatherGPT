@@ -31,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     {
       id: 'ml',
       label: 'ML Engine',
-      badge: 'Scikit-Learn',
+      badge: 'Scikit',
       icon: (
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="3" />
@@ -81,18 +81,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#030508]/85 border-b border-white/[0.08] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className="sticky top-3.5 z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full transition-all">
+      <div className="rounded-[1.75rem] border border-white/[0.12] bg-[#070b16]/85 backdrop-blur-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.9)] px-4 sm:px-6 py-3">
+        <div className="flex items-center justify-between">
+          
           {/* Logo & Brand (Space Aesthetic with Clean Geometry) */}
           <div
-            className="flex items-center space-x-3.5 cursor-pointer group"
+            className="flex items-center space-x-3 cursor-pointer group"
             onClick={() => onTabChange('dashboard')}
           >
             <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/20 flex items-center justify-center shadow-lg shadow-white/5 group-hover:border-white/40 transition-all duration-300">
-                {/* Modern Geometric Satellite / Weather Aperture SVG */}
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+              <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/20 flex items-center justify-center shadow-lg group-hover:border-white/50 transition-all duration-300">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="8" />
                   <path d="M12 2v4M12 18v4M2 12h4M18 12h4" strokeLinecap="round" />
                   <circle cx="12" cy="12" r="2" fill="white" />
@@ -102,29 +102,31 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-lg tracking-tight text-white">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight text-white">
                   WeatherGPT
                 </span>
-                <span className="px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase rounded-full bg-white/[0.08] text-slate-300 border border-white/15">
+                <span className="px-2 py-0.5 text-[9px] font-mono font-bold tracking-widest uppercase rounded-full bg-white/[0.08] text-slate-300 border border-white/15">
                   AI &amp; ML
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium tracking-tight">Meteorological Intelligence Platform</p>
+              <p className="text-[10px] text-slate-400 font-medium tracking-tight hidden sm:block">
+                Orbital Weather Intelligence
+              </p>
             </div>
           </div>
 
           {/* Navigation Tabs (Desktop) */}
-          <nav className="hidden lg:flex items-center space-x-1 p-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl shadow-inner">
+          <nav className="hidden lg:flex items-center space-x-1 p-1 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl shadow-inner">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`relative flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                  className={`relative flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'bg-white text-black shadow-lg shadow-white/10 font-bold'
-                      : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
+                      ? 'bg-white text-black shadow-lg shadow-white/15 font-extrabold scale-[1.02]'
+                      : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <span className={isActive ? 'text-black' : 'text-slate-400'}>{tab.icon}</span>
@@ -146,9 +148,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Unit Toggle & Live Status Pill */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5">
             {/* Sliding Pill Unit Switch */}
-            <div className="flex items-center bg-white/[0.04] p-1 rounded-xl border border-white/[0.08] shadow-inner">
+            <div className="flex items-center bg-black/60 p-0.5 rounded-xl border border-white/[0.10] shadow-inner">
               <button
                 onClick={() => temperatureUnit !== 'C' && onToggleUnit()}
                 className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
@@ -172,18 +174,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             {/* Live Indicator */}
-            <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/15 text-slate-300 text-xs shadow-sm">
+            <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/15 text-slate-300 text-xs shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
               </span>
-              <span className="font-semibold text-[11px] tracking-tight">Live Telemetry</span>
+              <span className="font-semibold text-[11px] tracking-tight">Telemetry Live</span>
             </div>
           </div>
         </div>
 
         {/* Mobile Navigation Scrollbar */}
-        <div className="lg:hidden flex items-center space-x-2 py-2.5 overflow-x-auto no-scrollbar border-t border-white/[0.05]">
+        <div className="lg:hidden flex items-center space-x-2 pt-2.5 mt-2 overflow-x-auto no-scrollbar border-t border-white/[0.06]">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (

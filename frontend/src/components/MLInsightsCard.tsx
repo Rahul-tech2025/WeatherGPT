@@ -47,7 +47,7 @@ export default function MLInsightsCard({
   const rainPred = prediction?.rainfall_prediction;
 
   return (
-    <InteractiveTiltCard maxTilt={4} glareOpacity={0.40} scaleOnHover={1.006}>
+    <InteractiveTiltCard maxTilt={4} glareOpacity={0.28} scaleOnHover={1.006}>
       <div className="glass-card rounded-[2.5rem] p-7 md:p-9 relative overflow-hidden group bg-[#080c14]/90 border border-white/[0.12]">
       {/* Decorative ambient atmospheric glow */}
       <div className="absolute -top-32 -right-32 w-80 h-80 bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none"></div>

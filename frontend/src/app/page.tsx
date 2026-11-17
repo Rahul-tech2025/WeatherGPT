@@ -134,21 +134,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-white selection:text-black bg-[#030508]">
+    <div className="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-white selection:text-black">
       
-      {/* Dynamic Floating Telemetry Island (Apple VisionOS / Sequoia Capsule) */}
-      <DynamicIslandCapsule
-        city={city}
-        forecast={forecast}
-        mlPrediction={mlPrediction}
-        unit={unit}
-        currentTheme={currentTheme}
-        onThemeChange={setCurrentTheme}
-        onNavigateTab={setActiveTab}
-        onPlayAudioBriefing={handleToggleAudioBriefing}
-        isPlayingAudio={isPlayingAudio}
-      />
-
       {/* Jarvis Voice Audio Floating Equalizer Player */}
       <AudioBriefingPlayer
         city={city}
@@ -159,12 +146,12 @@ export default function Home() {
         onTogglePlay={handleToggleAudioBriefing}
       />
 
-      {/* Background Ambient Cosmic Starlight Glow Orbs */}
-      <div className="fixed top-0 left-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-white/[0.03] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
-      <div className="fixed top-72 right-1/4 w-[550px] h-[400px] bg-gradient-to-bl from-white/[0.02] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
-      <div className="fixed bottom-10 left-1/3 w-[500px] h-[350px] bg-gradient-to-tr from-white/[0.02] to-transparent blur-[140px] pointer-events-none rounded-full -z-10" />
+      {/* Background Ambient Cosmic Nebula Glow Orbs */}
+      <div className="fixed top-0 left-1/4 w-[750px] h-[550px] bg-gradient-to-tr from-blue-700/20 via-indigo-600/12 to-transparent blur-[160px] pointer-events-none rounded-full -z-10" />
+      <div className="fixed top-80 right-1/4 w-[650px] h-[500px] bg-gradient-to-bl from-purple-700/16 via-cyan-600/12 to-transparent blur-[160px] pointer-events-none rounded-full -z-10" />
+      <div className="fixed bottom-10 left-1/3 w-[600px] h-[400px] bg-gradient-to-tr from-cyan-700/10 via-blue-600/10 to-transparent blur-[160px] pointer-events-none rounded-full -z-10" />
 
-      {/* 1. Header / Navbar */}
+      {/* 1. Header / Navbar (Floating Aerospace Glass Island) */}
       <Navbar
         temperatureUnit={unit}
         onToggleUnit={() => setUnit(unit === 'C' ? 'F' : 'C')}
@@ -173,12 +160,27 @@ export default function Home() {
       />
 
       {/* 2. Main Body Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 w-full flex-1">
         
         {/* TAB 1: WEATHER DASHBOARD */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-7">
+          <div className="space-y-6">
             
+            {/* Dynamic Telemetry Status Island (Clean, Centered & Expandable) */}
+            <div className="flex justify-center -mb-2">
+              <DynamicIslandCapsule
+                city={city}
+                forecast={forecast}
+                mlPrediction={mlPrediction}
+                unit={unit}
+                currentTheme={currentTheme}
+                onThemeChange={setCurrentTheme}
+                onNavigateTab={setActiveTab}
+                onPlayAudioBriefing={handleToggleAudioBriefing}
+                isPlayingAudio={isPlayingAudio}
+              />
+            </div>
+
             {/* Command Bar Search */}
             <SearchBar onSelectCity={handleSelectCity} currentCityName={city.name} />
 
