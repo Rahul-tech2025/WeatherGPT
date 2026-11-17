@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { CurrentWeather, DailyForecastItem } from '../types/weather';
-import InteractiveTiltCard from './InteractiveTiltCard';
 import RollingNumberTicker from './RollingNumberTicker';
+import InteractiveTiltCard from './InteractiveTiltCard';
 
 interface WeatherMetricsGridProps {
   current: CurrentWeather;
@@ -11,23 +11,26 @@ interface WeatherMetricsGridProps {
 }
 
 export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current, todayDaily }) => {
-  const getWindDirectionCompass = (deg: number) => {
+  // Compass direction calculation
+  const getWindDirectionCompass = (deg: number): string => {
     const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
     const index = Math.round(deg / 22.5) % 16;
     return directions[index];
   };
 
-  const getUvLevel = (uv: number) => {
-    if (uv <= 2) return { text: 'Low', color: 'text-slate-200 bg-white/[0.08] border-white/20', percent: 20, tip: 'Minimal solar radiation' };
-    if (uv <= 5) return { text: 'Moderate', color: 'text-slate-100 bg-white/[0.12] border-white/25', percent: 45, tip: 'Sun protection advised' };
-    if (uv <= 7) return { text: 'High', color: 'text-white bg-white/20 border-white/30', percent: 70, tip: 'SPF 30+ recommended' };
-    if (uv <= 10) return { text: 'Very High', color: 'text-white bg-white/25 border-white/40', percent: 88, tip: 'Avoid midday direct exposure' };
-    return { text: 'Extreme', color: 'text-white bg-white/30 border-white/50', percent: 100, tip: 'Remain in shade' };
+  // UV interpretation
+  const getUVDescription = (uv: number) => {
+    if (uv <= 2) return { text: 'Low', color: 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10', percent: 20, tip: 'Safe for extended outdoor activity' };
+    if (uv <= 5) return { text: 'Moderate', color: 'text-amber-300 border-amber-500/30 bg-amber-500/10', percent: 45, tip: 'Sun protection recommended during midday' };
+    if (uv <= 7) return { text: 'High', color: 'text-orange-300 border-orange-500/30 bg-orange-500/10', percent: 70, tip: 'UV filter sunglasses & SPF 30+ advised' };
+    if (uv <= 10) return { text: 'Very High', color: 'text-rose-300 border-rose-500/30 bg-rose-500/10', percent: 88, tip: 'Minimize midday sun exposure' };
+    return { text: 'Extreme', color: 'text-purple-300 border-purple-500/30 bg-purple-500/10', percent: 100, tip: 'Take all protective precautions outdoors' };
   };
 
-  const uvInfo = getUvLevel(todayDaily?.uvIndexMax ?? 2);
+  const uvInfo = getUVDescription(todayDaily?.uvIndexMax ?? 2);
 
-  const calculateSunProgress = () => {
+  // Solar Arc progression calculation
+  const calculateSunProgress = (): number => {
     if (!todayDaily?.sunrise || !todayDaily?.sunset) return 50;
     try {
       const now = new Date().getTime();
@@ -44,25 +47,25 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
   const sunProgress = calculateSunProgress();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
       
       {/* 1. Surface Wind with Visual Rotating Compass */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
+        <div className="glass-card rounded-[2rem] p-5 sm:p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
-            <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" />
                 </svg>
-                <span className="text-slate-300">Surface Wind</span>
+                <span className="text-slate-300 truncate">Surface Wind</span>
               </span>
-              <span className="text-[10px] bg-white/[0.08] text-white border border-white/15 px-2.5 py-0.5 rounded-full font-mono font-bold">
+              <span className="text-[10px] bg-white/[0.08] text-white border border-white/15 px-2.5 py-0.5 rounded-full font-mono font-bold flex-shrink-0 whitespace-nowrap">
                 {getWindDirectionCompass(current.windDirection)}
               </span>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="flex items-baseline space-x-2">
                   <span className="text-4xl font-black text-white tracking-tight">
@@ -76,7 +79,7 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
               </div>
 
               {/* Visual Rotating Compass Dial (Monochrome Titanium) */}
-              <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center rounded-full bg-black/60 border border-white/[0.15] shadow-inner">
+              <div className="relative w-18 h-18 sm:w-20 sm:h-20 flex-shrink-0 flex items-center justify-center rounded-full bg-black/60 border border-white/[0.15] shadow-inner">
                 <span className="absolute top-1 text-[9px] font-bold text-white font-mono">N</span>
                 <span className="absolute bottom-1 text-[9px] font-bold text-slate-500 font-mono">S</span>
                 <span className="absolute left-1.5 text-[9px] font-bold text-slate-500 font-mono">W</span>
@@ -84,10 +87,10 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
                 
                 {/* Compass Needle */}
                 <div
-                  className="w-12 h-12 flex items-center justify-center transition-transform duration-700 ease-out"
+                  className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center transition-transform duration-700 ease-out"
                   style={{ transform: `rotate(${current.windDirection}deg)` }}
                 >
-                  <svg className="w-9 h-9" viewBox="0 0 24 24" fill="none">
+                  <svg className="w-8 h-8 sm:w-9 sm:h-9" viewBox="0 0 24 24" fill="none">
                     <polygon points="12,2 15,12 12,9 9,12" fill="#ffffff" />
                     <polygon points="12,22 15,12 12,15 9,12" fill="#475569" />
                     <circle cx="12" cy="12" r="2" fill="#000" />
@@ -105,11 +108,11 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
 
       {/* 2. Solar UV Index with Arc Meter */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
+        <div className="glass-card rounded-[2rem] p-5 sm:p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
-            <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -120,9 +123,9 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
                   <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                 </svg>
-                <span className="text-slate-300">UV Index</span>
+                <span className="text-slate-300 truncate">UV Index</span>
               </span>
-              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${uvInfo.color}`}>
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex-shrink-0 whitespace-nowrap ${uvInfo.color}`}>
                 {uvInfo.text}
               </span>
             </div>
@@ -151,16 +154,16 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
 
       {/* 3. Daylight & Sun Arc Progression */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
+        <div className="glass-card rounded-[2rem] p-5 sm:p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
-            <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2v6M4.93 4.93l4.24 4.24M2 18h20M20 18a8 8 0 0 0-16 0" />
                 </svg>
-                <span className="text-slate-300">Solar Arc</span>
+                <span className="text-slate-300 truncate">Solar Arc</span>
               </span>
-              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2 py-0.5 rounded-full font-mono font-bold">
+              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2.5 py-0.5 rounded-full font-mono font-bold flex-shrink-0 whitespace-nowrap">
                 {sunProgress}% Elapsed
               </span>
             </div>
@@ -199,16 +202,16 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
 
       {/* 4. Relative Humidity & Dew Point */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
+        <div className="glass-card rounded-[2rem] p-5 sm:p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
-            <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
                 </svg>
-                <span className="text-slate-300">Humidity &amp; Dew Point</span>
+                <span className="text-slate-300 truncate">Humidity &amp; Dew</span>
               </span>
-              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2.5 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2.5 py-0.5 rounded-full font-bold flex-shrink-0 whitespace-nowrap">
                 {current.humidity > 70 ? 'Humid' : current.humidity < 35 ? 'Dry' : 'Balanced'}
               </span>
             </div>
@@ -224,26 +227,26 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
               />
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.04] text-[11px] text-slate-400 flex justify-between">
-            <span>Apparent Thermal Feel</span>
-            <strong className="text-white font-mono">{Math.round(current.feelsLike)}°C</strong>
+          <div className="mt-4 pt-3 border-t border-white/[0.04] text-[11px] text-slate-400 flex items-center justify-between gap-2">
+            <span className="truncate">Thermal Feel</span>
+            <strong className="text-white font-mono flex-shrink-0">{Math.round(current.feelsLike)}°C</strong>
           </div>
         </div>
       </InteractiveTiltCard>
 
       {/* 5. Barometric Pressure */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="glass-card rounded-[2rem] p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
+        <div className="glass-card rounded-[2rem] p-5 sm:p-6 relative overflow-hidden group h-full flex flex-col justify-between bg-[#080c14]/85 border border-white/[0.10]">
           <div>
-            <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
                 </svg>
-                <span className="text-slate-300">Air Pressure</span>
+                <span className="text-slate-300 truncate">Air Pressure</span>
               </span>
-              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2.5 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] bg-white/[0.08] text-slate-300 border border-white/15 px-2.5 py-0.5 rounded-full font-bold flex-shrink-0 whitespace-nowrap">
                 {current.pressure > 1013 ? 'High Density' : 'Standard'}
               </span>
             </div>
@@ -253,24 +256,24 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
               </span>
               <span className="text-slate-400 text-sm font-semibold">hPa</span>
             </div>
-            <div className="mt-3.5 text-xs text-slate-400">
+            <div className="mt-3 text-xs text-slate-400 leading-relaxed">
               Steady barometric datum across lower troposphere
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/[0.04] text-[11px] text-slate-400 flex justify-between">
-            <span>Standard Datum</span>
-            <strong className="text-slate-300 font-mono">1013.25 hPa</strong>
+          <div className="mt-4 pt-3 border-t border-white/[0.04] text-[11px] text-slate-400 flex items-center justify-between gap-2">
+            <span className="truncate">Standard Datum</span>
+            <strong className="text-slate-300 font-mono flex-shrink-0">1013.25 hPa</strong>
           </div>
         </div>
       </InteractiveTiltCard>
 
       {/* 6. Dual AI Architecture Showcase */}
       <InteractiveTiltCard maxTilt={5} glareOpacity={0.28} className="rounded-[2rem]">
-        <div className="rounded-[2rem] p-6 bg-white/[0.03] border border-white/[0.12] backdrop-blur-3xl shadow-xl relative overflow-hidden group h-full flex flex-col justify-between">
+        <div className="rounded-[2rem] p-5 sm:p-6 bg-white/[0.03] border border-white/[0.12] backdrop-blur-3xl shadow-xl relative overflow-hidden group h-full flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between text-slate-300 text-xs font-bold uppercase tracking-wider mb-3">
-              <span className="flex items-center space-x-2">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-center justify-between gap-2 text-slate-300 text-xs font-bold uppercase tracking-wider mb-3">
+              <span className="flex items-center space-x-2 min-w-0">
+                <svg className="w-4 h-4 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="4" y="4" width="16" height="16" rx="2" />
                   <rect x="9" y="9" width="6" height="6" />
                   <line x1="9" y1="1" x2="9" y2="4" />
@@ -282,19 +285,19 @@ export const WeatherMetricsGrid: React.FC<WeatherMetricsGridProps> = ({ current,
                   <line x1="1" y1="9" x2="4" y2="9" />
                   <line x1="1" y1="14" x2="4" y2="14" />
                 </svg>
-                <span className="text-white">Dual AI Engine</span>
+                <span className="text-white truncate">Dual AI Engine</span>
               </span>
-              <span className="text-[10px] bg-white/10 text-white border border-white/20 px-2.5 py-0.5 rounded-full font-mono font-bold">
+              <span className="text-[10px] bg-white/10 text-white border border-white/20 px-2.5 py-0.5 rounded-full font-mono font-bold flex-shrink-0 whitespace-nowrap">
                 Online
               </span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed font-medium">
-              Combines <strong>Google Gemini</strong> for conversational reasoning &amp; <strong>Scikit-Learn ML Models</strong> ($R^2 = 0.975$) for next-day telemetry.
+              Combines <strong>Google Gemini</strong> reasoning &amp; <strong>Scikit-Learn ML Models</strong> ($R^2 = 0.975$) for next-day telemetry.
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white font-bold">
-            <span>Verified ML Microservice</span>
-            <span className="text-[11px] text-slate-400 font-mono">Port 8000</span>
+          <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white font-bold gap-2">
+            <span className="truncate">Verified ML Engine</span>
+            <span className="text-[11px] text-slate-400 font-mono flex-shrink-0">Port 8000</span>
           </div>
         </div>
       </InteractiveTiltCard>

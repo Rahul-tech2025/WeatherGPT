@@ -97,8 +97,10 @@ export const DailyForecast: React.FC<DailyForecastProps> = ({ daily, unit }) => 
               {/* Precipitation Probability */}
               <div className="w-16 text-right">
                 {item.precipitationProbabilityMax > 0 ? (
-                  <span className="text-xs font-bold text-cyan-400 flex items-center justify-end space-x-1">
-                    <span className="text-[10px]">💧</span>
+                  <span className="text-xs font-bold text-slate-300 flex items-center justify-end space-x-1">
+                    <svg className="w-3 h-3 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                    </svg>
                     <span>{item.precipitationProbabilityMax}%</span>
                   </span>
                 ) : (
