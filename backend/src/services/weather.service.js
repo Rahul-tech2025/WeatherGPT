@@ -5,6 +5,15 @@ const GEOCODING_BASE_URL = process.env.OPEN_METEO_GEO_URL || 'https://geocoding-
 const WEATHER_BASE_URL = process.env.OPEN_METEO_API_URL || 'https://api.open-meteo.com/v1';
 const ARCHIVE_BASE_URL = 'https://archive-api.open-meteo.com/v1';
 
+// Robust HTTP client with standard User-Agent to avoid datacenter IP throttling
+const httpClient = axios.create({
+  timeout: 12000,
+  headers: {
+    'User-Agent': 'WeatherGPT/1.0 (LPU Academic Mini-Project; Node.js)',
+    'Accept': 'application/json'
+  }
+});
+
 class WeatherService {
   /**
    * Search cities by name using Open-Meteo Geocoding API
@@ -17,7 +26,7 @@ class WeatherService {
     }
 
     try {
-      const response = await axios.get(`${GEOCODING_BASE_URL}/search`, {
+      const response = await httpClient.get(`${GEOCODING_BASE_URL}/search`, {
         params: {
           name: query.trim(),
           count: count,
@@ -56,7 +65,7 @@ class WeatherService {
    */
   async getCurrentWeather(latitude, longitude) {
     try {
-      const response = await axios.get(`${WEATHER_BASE_URL}/forecast`, {
+      const response = await httpClient.get(`${WEATHER_BASE_URL}/forecast`, {
         params: {
           latitude,
           longitude,
@@ -130,7 +139,7 @@ class WeatherService {
    */
   async getForecast(latitude, longitude) {
     try {
-      const response = await axios.get(`${WEATHER_BASE_URL}/forecast`, {
+      const response = await httpClient.get(`${WEATHER_BASE_URL}/forecast`, {
         params: {
           latitude,
           longitude,
@@ -268,7 +277,7 @@ class WeatherService {
    */
   async getHistoricalWeather(latitude, longitude, startDate, endDate) {
     try {
-      const response = await axios.get(`${ARCHIVE_BASE_URL}/archive`, {
+      const response = await httpClient.get(`${ARCHIVE_BASE_URL}/archive`, {
         params: {
           latitude,
           longitude,

@@ -4,10 +4,19 @@ const path = require('path');
 
 const ML_SERVICE_URL =
   process.env.ML_SERVICE_URL ||
-  (process.env.NODE_ENV === 'production'
+  (process.env.RENDER === 'true' || process.env.NODE_ENV === 'production'
     ? 'https://weathergpt-ml.onrender.com'
     : 'http://localhost:8000');
 const WEATHER_API_URL = process.env.OPEN_METEO_API_URL || 'https://api.open-meteo.com/v1';
+
+// Custom axios client with explicit User-Agent to prevent cloud IP blocks
+const httpClient = axios.create({
+  timeout: 12000,
+  headers: {
+    'User-Agent': 'WeatherGPT/1.0 (LPU Academic Mini-Project; Node.js)',
+    'Accept': 'application/json'
+  }
+});
 
 // Path to pre-generated metrics fallback if ML service is unreachable
 const LOCAL_METRICS_PATH = path.resolve(__dirname, '../../../ml-service/models/metrics.json');
@@ -18,7 +27,7 @@ class MLService {
    */
   async getHealth() {
     try {
-      const response = await axios.get(`${ML_SERVICE_URL}/health`, { timeout: 3000 });
+      const response = await httpClient.get(`${ML_SERVICE_URL}/health`, { timeout: 4000 });
       return response.data;
     } catch (error) {
       return {
@@ -38,7 +47,7 @@ class MLService {
    */
   async getMetrics() {
     try {
-      const response = await axios.get(`${ML_SERVICE_URL}/model/metrics`, { timeout: 3000 });
+      const response = await httpClient.get(`${ML_SERVICE_URL}/model/metrics`, { timeout: 4000 });
       return response.data;
     } catch (error) {
       // Fallback: Read directly from local metrics.json if available on server disk
@@ -61,7 +70,7 @@ class MLService {
    */
   async fetchRecentWeatherHistory(latitude, longitude) {
     try {
-      const response = await axios.get(`${WEATHER_API_URL}/forecast`, {
+      const response = await httpClient.get(`${WEATHER_API_URL}/forecast`, {
         params: {
           latitude,
           longitude,
@@ -79,8 +88,7 @@ class MLService {
             'surface_pressure'
           ].join(','),
           timezone: 'auto'
-        },
-        timeout: 10000
+        }
       });
 
       const daily = response.data.daily;
@@ -137,10 +145,30 @@ class MLService {
    * @param {number} longitude
    */
   async predictForCity(city, latitude, longitude) {
-    const history = await this.fetchRecentWeatherHistory(latitude, longitude);
+    let history = [];
+    try {
+      history = await this.fetchRecentWeatherHistory(latitude, longitude);
+    } catch (hErr) {
+      console.warn('Could not fetch historical telemetry, constructing baseline vector:', hErr.message);
+      const today = new Date();
+      for (let i = 7; i >= 1; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        history.push({
+          date: d.toISOString().split('T')[0],
+          temp_mean: 22.0,
+          temp_max: 27.0,
+          temp_min: 17.0,
+          humidity: 55.0,
+          pressure: 1012.0,
+          wind_speed: 10.0,
+          precipitation: 0.0
+        });
+      }
+    }
 
     try {
-      const response = await axios.post(`${ML_SERVICE_URL}/predict/daily`, {
+      const response = await httpClient.post(`${ML_SERVICE_URL}/predict/daily`, {
         city,
         target_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
         history
@@ -151,10 +179,10 @@ class MLService {
       console.warn(`FastAPI ML service call failed (${error.message}). Falling back to statistical baseline.`);
 
       // Robust fallback if FastAPI is not yet running
-      const lastDay = history[history.length - 1];
-      const prevDays = history.slice(-3);
+      const lastDay = history.length > 0 ? history[history.length - 1] : { temp_mean: 22.0 };
+      const prevDays = history.length >= 3 ? history.slice(-3) : [{ temp_mean: 22.0 }];
       const avgTemp = prevDays.reduce((acc, d) => acc + d.temp_mean, 0) / prevDays.length;
-      const recentRain = prevDays.some(d => d.precipitation > 0.5);
+      const recentRain = prevDays.some(d => (d.precipitation || 0) > 0.5);
 
       return {
         status: 'fallback',

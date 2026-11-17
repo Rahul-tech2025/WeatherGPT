@@ -101,11 +101,11 @@ app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
   const isDev = process.env.NODE_ENV === 'development';
 
-  console.error('[WeatherGPT Security Gateway Error]:', err.message);
+  console.error('[WeatherGPT Security Gateway Error]:', err.message, err.stack);
 
   res.status(statusCode).json({
     status: 'error',
-    message: isDev ? err.message : (statusCode === 500 ? 'Internal Server Processing Error' : err.message),
+    message: err.message || 'Internal Server Processing Error',
     timestamp: new Date().toISOString(),
   });
 });

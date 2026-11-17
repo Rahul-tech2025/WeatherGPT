@@ -125,18 +125,32 @@ GROUND TRUTH DATA:
 ${JSON.stringify(groundingContext, null, 2)}
 `;
 
-        const response = await this.aiClient.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: [
-            { role: 'user', parts: [{ text: `${systemInstruction}\n\nUser Question: ${message}` }] }
-          ]
-        });
+        const modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+        let replyText = null;
+        let successfulModel = 'gemini-3.1-flash-lite';
 
-        const replyText = response.text || response.candidates?.[0]?.content?.parts?.[0]?.text;
+        for (const m of modelsToTry) {
+          try {
+            const response = await this.aiClient.models.generateContent({
+              model: m,
+              contents: [
+                { role: 'user', parts: [{ text: `${systemInstruction}\n\nUser Question: ${message}` }] }
+              ]
+            });
+            replyText = response.text || response.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (replyText) {
+              successfulModel = m;
+              break;
+            }
+          } catch (modelErr) {
+            console.warn(`Gemini model ${m} attempt failed:`, modelErr.message);
+          }
+        }
+
         if (replyText) {
           return {
             status: 'success',
-            provider: 'Gemini 2.5 Flash',
+            provider: `Google Gemini (${successfulModel})`,
             city: resolvedCity,
             reply: replyText,
             grounding: groundingContext
