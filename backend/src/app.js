@@ -33,8 +33,13 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (e.g. server-to-server or curl) or whitelisted origins
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow non-browser requests (e.g. server-to-server or curl), whitelisted origins, or vercel/render domains
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.onrender.com')
+    ) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not permitted by WeatherGPT CORS policy`));
